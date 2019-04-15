@@ -1,0 +1,74 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.parachute.report.ReportActivity">
+
+    <RelativeLayout
+        android:id="@+id/navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/secondary_title_background"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dip"
+        android:paddingRight="10dip">
+
+        <RelativeLayout
+            android:id="@+id/current_path_pane"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/path_pane_bg"
+            android:gravity="center_vertical"
+           >
+
+            <TextView
+                android:id="@+id/current_path_view"
+                style="?android:attr/textAppearanceMedium"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ellipsize="start"
+                android:gravity="center"
+                android:paddingLeft="10dip"
+                android:singleLine="true"
+                android:text="测 试 报 告 列 表"
+                android:textColor="#080b2d"
+                android:textSize="22sp" />
+
+            <ImageButton
+                android:id="@+id/push"
+                android:layout_width="@dimen/x30"
+                android:layout_height="@dimen/x30"
+                android:layout_alignParentEnd="true"
+                android:background="@null"
+                android:src="@drawable/bg_frash_report" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+    <ListView
+        android:id="@+id/lv"
+        android:layout_below="@id/navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:headerDividersEnabled="true"
+        android:footerDividersEnabled="true"
+        android:fastScrollEnabled="true"
+        />
+
+    <TextView
+        android:id="@+id/tv_null"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="#2d0b03"
+        android:layout_marginLeft="30dp"
+        android:layout_below="@id/navigation_bar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp"
+        android:gravity="center"
+        />
+
+</RelativeLayout>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/x30"
+            android:paddingLeft="@dimen/x5"
+            android:paddingRight="@dimen/x5"
+            android:paddingTop="@dimen/x15">
+
+            <TextView
+                android:id="@+id/tv_tittle_task"
+                style="@style/TextView_style0"
+                android:layout_marginLeft="@dimen/x5"
+                android:text="@string/task_inf"
+                android:textSize="16sp" />
+
+            <LinearLayout style="@style/ly_testparam_row">
+
+                <TextView
+                    style="@style/style_testparam_name"
+                    android:text="受检单位" />
+
+                <TextView
+                    android:id="@+id/tv_testparam_tg_length1"
+                    style="@style/style_testparam_length" />
+
+                <TextView
+                    style="@style/style_testparam_wy"
+                    android:text="防坠器编号" />
+
+                <TextView
+                    android:id="@+id/tv_testparam_tg_wy1"
+                    style="@style/style_testparam_offset" />
+            </LinearLayout>
+
+            <LinearLayout style="@style/ly_testparam_row">
+
+                <TextView
+                    style="@style/style_testparam_name"
+                    android:text="测试人员" />
+
+                <TextView
+                    android:id="@+id/tv_testparam_tg_length2"
+                    style="@style/style_testparam_length" />
+
+                <TextView
+                    style="@style/style_testparam_wy"
+                    android:text="创建日期" />
+
+                <TextView
+                    android:id="@+id/tv_testparam_tg_wy2"
+                    style="@style/style_testparam_offset" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+
+
+</LinearLayout>

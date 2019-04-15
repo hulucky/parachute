@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_report"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.parachute.report.ReportActivity"
+    tools:showIn="@layout/activity_report">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_show_data"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/x30"
+        >
+    </android.support.v4.view.ViewPager>
+
+    <RadioGroup
+        android:id="@+id/rg_select"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/x40"
+        android:orientation="horizontal"
+        android:background="#FFF"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_vertical"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:visibility="gone"
+        >
+        <RadioButton
+            android:id="@+id/rb_group"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:button="@null"
+            android:drawableTop="@drawable/bg_selector_data_group"
+            android:text="测试报告"
+            android:textSize="18sp"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:checked="true"
+            android:textColor="@drawable/bg_selector_data_gb_textcolor_black"
+            />
+        <RadioButton
+            android:id="@+id/rb_data"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:button="@null"
+            android:drawableTop="@drawable/bg_selector_data_clock"
+            android:textColor="@drawable/bg_selector_data_gb_textcolor_black"
+            android:text="文件传输"
+            android:textSize="18sp"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            />
+    </RadioGroup>
+
+</RelativeLayout>

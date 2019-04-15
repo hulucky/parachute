@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/x280"
+    android:layout_height="@dimen/x100"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:layout_gravity="center"
+    android:paddingTop="@dimen/x10"
+    android:focusable="true"
+    >
+
+    <TextView
+        android:id="@+id/tv_dialog_name"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        />
+
+    <EditText
+        android:id="@+id/et_dialog_input"
+        android:layout_width="@dimen/x60"
+        android:layout_height="@dimen/x20"
+        android:gravity="center"
+        android:focusable="true"
+        android:clickable="true"
+        android:inputType="numberDecimal|numberSigned"
+        android:selectAllOnFocus="true"
+        android:background="@drawable/bg_selector_edittext"
+        />
+
+    <TextView
+        android:id="@+id/tv_dialog_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:textSize="18sp"
+        android:layout_marginLeft="@dimen/x5"
+        />
+</LinearLayout>

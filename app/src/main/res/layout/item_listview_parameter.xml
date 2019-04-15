@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@color/white"
+    android:divider="@drawable/bg_divider"
+    android:showDividers="middle"
+    >
+    <TextView
+        android:id="@+id/tv_item_tab0"
+        style="@style/TextView_style21"
+        android:layout_width="0dp"
+        android:layout_weight="2"
+        android:text="参数0"
+        android:textSize="18sp"
+
+        android:paddingTop="@dimen/x5"
+        android:paddingBottom="@dimen/x5"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
+        android:background="@color/white_hint"
+        />
+
+    <TextView
+        android:id="@+id/tv_item_tab1"
+        style="@style/TextView_style21"
+        android:layout_width="0dp"
+        android:layout_weight="3"
+        android:text="参数1"
+        android:textSize="18sp"
+        android:textColor="@drawable/selector_item_text_color"
+        android:paddingTop="@dimen/x5"
+        android:paddingBottom="@dimen/x5"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
+        android:background="@color/white"
+        android:clickable="true"
+        android:enabled="true"
+        />
+
+
+    <TextView
+        android:id="@+id/tv_item_tab2"
+        style="@style/TextView_style21"
+        android:layout_width="0dp"
+        android:layout_weight="2"
+        android:text="参数2"
+        android:textSize="18sp"
+
+        android:paddingTop="@dimen/x5"
+        android:paddingBottom="@dimen/x5"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
+        android:background="@color/white_hint"
+        />
+
+
+    <TextView
+        android:id="@+id/tv_item_tab3"
+        style="@style/TextView_style21"
+        android:layout_width="0dp"
+        android:layout_weight="3"
+        android:text="参数3"
+        android:textSize="18sp"
+        android:textColor="@drawable/selector_item_text_color"
+        android:paddingTop="@dimen/x5"
+        android:paddingBottom="@dimen/x5"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
+        android:layout_marginRight="1dp"
+        android:background="@color/white"
+        android:clickable="true"
+        android:enabled="true"
+        />
+
+</LinearLayout>

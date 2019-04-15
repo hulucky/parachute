@@ -1,0 +1,1182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nestedScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="clip_horizontal"
+        android:visibility="gone"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="35dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_param_csff"
+                    style="@style/TextViewName"
+                    android:text="测试方法: " />
+
+                <Spinner
+                    android:id="@+id/sp_input_param_csff"
+                    style="@style/SpinnerContent"
+                    android:entries="@array/test_type" />
+
+                <TextView
+
+                    style="@style/TextViewUnit"
+                    android:layout_marginLeft="5dp"
+                    android:text="  " />
+
+            </LinearLayout>
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="clip_horizontal"
+                android:orientation="horizontal">
+
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_tittle"
+                        style="@style/TextViewName"
+                        android:text="通风方式: " />
+
+                    <Spinner
+                        android:id="@+id/sp_input_param_venti"
+                        style="@style/SpinnerContent"
+                        android:entries="@array/venti_type" />
+
+                    <TextView
+
+                        style="@style/TextViewUnit"
+                        android:layout_marginLeft="5dp"
+                        android:text="  " />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+
+                    style="@style/TextViewName"
+                    android:text="测风面积: " />
+
+
+                <EditText
+                    android:id="@+id/et_param_cfmj"
+                    style="@style/EdittextInput" />
+
+                <TextView
+
+                    style="@style/TextViewUnit"
+                    android:layout_marginLeft="5dp"
+                    android:text="㎡" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+
+                    style="@style/TextViewName"
+
+                    android:text="扩散器出口面积: " />
+
+
+                <EditText
+                    android:id="@+id/et_param_ksqckmj"
+                    style="@style/EdittextInput" />
+
+                <TextView
+
+                    style="@style/TextViewUnit"
+                    android:layout_marginLeft="5dp"
+                    android:text="㎡" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+
+                    style="@style/TextViewName"
+                    android:text="电压变比: " />
+
+
+                <EditText
+                    android:id="@+id/et_param_dybb1"
+                    style="@style/EdittextInput"
+                    android:layout_width="@dimen/x33"
+                    android:text="1" />
+
+                <TextView
+                    android:layout_width="@dimen/x4"
+                    android:layout_height="wrap_content"
+                    android:text="/" />
+
+                <EditText
+                    android:id="@+id/et_param_dybb2"
+                    style="@style/EdittextInput"
+                    android:layout_width="@dimen/x33"
+                    android:text="1" />
+
+                <TextView
+                    android:id="@+id/tv_param_dybb"
+                    style="@style/TextViewUnit"
+                    android:layout_marginLeft="5dp"
+                    android:text="1.0" />
+            </LinearLayout>
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+
+                    style="@style/TextViewName"
+                    android:text="电流变比: " />
+
+
+                <EditText
+                    android:id="@+id/et_param_dlbb1"
+                    style="@style/EdittextInput"
+                    android:layout_width="@dimen/x33"
+                    android:text="1" />
+
+                <TextView
+                    android:layout_width="@dimen/x4"
+                    android:layout_height="wrap_content"
+                    android:text="/" />
+
+                <EditText
+                    android:id="@+id/et_param_dlbb2"
+                    style="@style/EdittextInput"
+                    android:layout_width="@dimen/x33"
+                    android:text="1" />
+
+                <TextView
+
+                    android:id="@+id/tv_param_dlbb"
+                    style="@style/TextViewUnit"
+                    android:layout_marginLeft="5dp"
+                    android:text="1.0" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ly_param_ptgxs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+
+                    style="@style/TextViewName"
+                    android:text="皮托管系数：" />
+
+
+                <EditText
+                    android:id="@+id/et_param_ptgxs"
+                    style="@style/EdittextInput" />
+
+                <TextView
+
+                    style="@style/TextViewUnit"
+                    android:layout_marginLeft="5dp"
+                    android:text=" " />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+
+                    style="@style/TextViewName"
+
+                    android:text=" " />
+
+
+                <TextView
+
+                    style="@style/TextViewName"
+                    android:layout_width="@dimen/x70"
+                    android:text=" " />
+
+                <TextView
+
+                    style="@style/TextViewUnit"
+                    android:layout_marginLeft="5dp"
+                    android:text="" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ly_param_cymj"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+
+                    style="@style/TextViewName"
+                    android:text="测压面积大: " />
+
+
+                <EditText
+                    android:id="@+id/et_param_cymjd"
+                    style="@style/EdittextInput" />
+
+                <TextView
+
+                    style="@style/TextViewUnit"
+                    android:layout_marginLeft="5dp"
+                    android:text="㎡" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+
+                    style="@style/TextViewName"
+
+                    android:text="测压面积小: " />
+
+
+                <EditText
+                    android:id="@+id/et_param_cymjx"
+                    style="@style/EdittextInput" />
+
+                <TextView
+
+                    style="@style/TextViewUnit"
+                    android:layout_marginLeft="5dp"
+                    android:text="㎡" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/cs_line_02" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+
+                    style="@style/TextViewName"
+                    android:text="电机1型号：" />
+
+                <TextView
+                    android:id="@+id/tv_param_djxl1"
+                    style="@style/TextViewShowdj"
+                    android:background="@drawable/selector_textview_djxh"
+                    android:clickable="false" />
+
+                <TextView
+
+                    style="@style/TextViewUnit"
+                    android:text="" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_param_qblc1"
+                    style="@style/TextViewName"
+                    android:text="钳表量程: " />
+
+                <Spinner
+                    android:id="@+id/sp_input_param_qblc1"
+                    style="@style/SpinnerContent"
+                    android:entries="@array/qblc_pipe" />
+
+                <TextView
+
+                    style="@style/TextViewUnit"
+                    android:layout_marginLeft="5dp"
+                    android:text="  " />
+
+            </LinearLayout>
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="clip_horizontal"
+                android:orientation="horizontal">
+
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_param_motor_csff1"
+                        style="@style/TextViewName"
+                        android:text="测试方法: " />
+
+                    <Spinner
+                        android:id="@+id/sp_input_param_motor_csff1"
+                        style="@style/SpinnerContent"
+
+                        android:entries="@array/motortest_type" />
+
+                    <TextView
+
+                        style="@style/TextViewUnit"
+                        android:layout_marginLeft="5dp"
+                        android:text="  " />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_param_cdxl1"
+                    style="@style/TextViewName"
+                    android:text="传动效率: " />
+
+                <Spinner
+                    android:id="@+id/sp_input_param_cdxl1"
+                    style="@style/SpinnerContent"
+                    android:entries="@array/array_cdxl" />
+
+                <TextView
+
+                    style="@style/TextViewUnit"
+                    android:layout_marginLeft="5dp"
+                    android:text="  " />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+
+                    style="@style/TextViewName"
+
+                    android:text=" " />
+
+
+                <TextView
+
+                    style="@style/TextViewName"
+                    android:layout_width="@dimen/x70"
+                    android:text=" " />
+
+                <TextView
+
+                    style="@style/TextViewUnit"
+                    android:layout_marginLeft="5dp"
+                    android:text="" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/cs_line_02" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+
+                    style="@style/TextViewName"
+                    android:text="电机2型号：" />
+
+                <TextView
+                    android:id="@+id/tv_param_djxl2"
+                    style="@style/TextViewShowdj"
+                    android:background="@drawable/selector_textview_djxh"
+                    android:clickable="false" />
+
+                <TextView
+
+                    style="@style/TextViewUnit"
+                    android:text="" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_param_qblc2"
+                    style="@style/TextViewName"
+                    android:text="钳表量程: " />
+
+                <Spinner
+                    android:id="@+id/sp_input_param_qblc2"
+                    style="@style/SpinnerContent"
+                    android:entries="@array/qblc_pipe" />
+
+                <TextView
+
+                    style="@style/TextViewUnit"
+                    android:layout_marginLeft="5dp"
+                    android:text="  " />
+
+            </LinearLayout>
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="clip_horizontal"
+                android:orientation="horizontal">
+
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_param_motor_csff2"
+                        style="@style/TextViewName"
+                        android:text="测试方法: " />
+
+                    <Spinner
+                        android:id="@+id/sp_input_param_motor_csff2"
+                        style="@style/SpinnerContent"
+
+                        android:entries="@array/motortest_type" />
+
+                    <TextView
+
+                        style="@style/TextViewUnit"
+                        android:layout_marginLeft="5dp"
+                        android:text="  " />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_param_cdxl2"
+                    style="@style/TextViewName"
+                    android:text="传动效率: " />
+
+                <Spinner
+                    android:id="@+id/sp_input_param_cdxl2"
+                    style="@style/SpinnerContent"
+                    android:entries="@array/array_cdxl" />
+
+                <TextView
+
+                    style="@style/TextViewUnit"
+                    android:layout_marginLeft="5dp"
+                    android:text="  " />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+
+                    style="@style/TextViewName"
+
+                    android:text=" " />
+
+
+                <TextView
+
+                    style="@style/TextViewName"
+                    android:layout_width="@dimen/x70"
+                    android:text=" " />
+
+                <TextView
+
+                    style="@style/TextViewUnit"
+                    android:layout_marginLeft="5dp"
+                    android:text="" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+
+
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <ImageView
+
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_weight="1"
+                android:src="@drawable/cs_line_02" />
+
+            <ImageView
+                android:id="@+id/img_param_rwxx"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:src="@drawable/rwxx_icon_open" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ly_param_set"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <LinearLayout
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        style="@style/TextViewName"
+                        android:text="风速: " />
+
+
+                    <EditText
+                        android:id="@+id/et_param_set_fs"
+                        style="@style/EdittextInput" />
+
+                    <TextView
+
+                        style="@style/TextViewUnit"
+                        android:layout_marginLeft="5dp"
+                        android:text="m/s" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        style="@style/TextViewName"
+
+                        android:text="温度: " />
+
+
+                    <EditText
+                        android:id="@+id/et_param_set_wd"
+                        style="@style/EdittextInput"
+                        android:numeric="decimal|signed|integer" />
+
+                    <TextView
+
+                        style="@style/TextViewUnit"
+                        android:layout_marginLeft="5dp"
+                        android:text="℃" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <LinearLayout
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        style="@style/TextViewName"
+                        android:text="静压: " />
+
+
+                    <EditText
+                        android:id="@+id/et_param_set_jy"
+                        style="@style/EdittextInput"
+                        android:numeric="decimal|signed|integer" />
+
+                    <TextView
+
+                        style="@style/TextViewUnit"
+                        android:layout_marginLeft="5dp"
+                        android:text="Pa" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        style="@style/TextViewName"
+
+                        android:text="湿度: " />
+
+
+                    <EditText
+                        android:id="@+id/et_param_set_sd"
+                        style="@style/EdittextInput" />
+
+                    <TextView
+
+                        style="@style/TextViewUnit"
+                        android:layout_marginLeft="5dp"
+                        android:text="%RH" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <LinearLayout
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        style="@style/TextViewName"
+                        android:text="差压: " />
+
+
+                    <EditText
+                        android:id="@+id/et_param_set_cy"
+                        style="@style/EdittextInput"
+                        android:numeric="decimal|signed|integer" />
+
+                    <TextView
+
+                        style="@style/TextViewUnit"
+                        android:layout_marginLeft="5dp"
+                        android:text="Pa" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        style="@style/TextViewName"
+
+                        android:text="大气压: " />
+
+
+                    <EditText
+                        android:id="@+id/et_param_set_dqy"
+                        style="@style/EdittextInput" />
+
+                    <TextView
+
+                        style="@style/TextViewUnit"
+                        android:layout_marginLeft="5dp"
+                        android:text="hPa" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <LinearLayout
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        style="@style/TextViewName"
+                        android:text="电机1功率: " />
+
+
+                    <EditText
+                        android:id="@+id/et_param_set_djgl1"
+                        style="@style/EdittextInput" />
+
+                    <TextView
+
+                        style="@style/TextViewUnit"
+                        android:layout_marginLeft="5dp"
+                        android:text="@string/kW" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        style="@style/TextViewName"
+
+                        android:text="电机2功率: " />
+
+
+                    <EditText
+                        android:id="@+id/et_param_set_djgl2"
+                        style="@style/EdittextInput" />
+
+                    <TextView
+
+                        style="@style/TextViewUnit"
+                        android:layout_marginLeft="5dp"
+                        android:text="@string/kW" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <LinearLayout
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        style="@style/TextViewName"
+                        android:text="电机1效率: " />
+
+
+                    <EditText
+                        android:id="@+id/et_param_set_djxl1"
+                        style="@style/EdittextInput" />
+
+                    <TextView
+
+                        style="@style/TextViewUnit"
+                        android:layout_marginLeft="5dp"
+                        android:text="%" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        style="@style/TextViewName"
+
+                        android:text="电机2效率: " />
+
+
+                    <EditText
+                        android:id="@+id/et_param_set_djxl2"
+                        style="@style/EdittextInput" />
+
+                    <TextView
+
+                        style="@style/TextViewUnit"
+                        android:layout_marginLeft="5dp"
+                        android:text="%" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <LinearLayout
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        style="@style/TextViewName"
+                        android:text="额定转速: " />
+
+
+                    <EditText
+                        android:id="@+id/et_param_set_edzs"
+                        style="@style/EdittextInput"
+                        android:text="1000"/>
+
+                    <TextView
+
+                        style="@style/TextViewUnit"
+                        android:layout_marginLeft="1dp"
+                        android:text="r/min" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+
+                        style="@style/TextViewName"
+
+                        android:text="实测转速: " />
+
+
+                    <EditText
+                        android:id="@+id/et_param_set_sczs"
+                        style="@style/EdittextInput"
+                        android:text="1000"/>
+
+                    <TextView
+
+                        style="@style/TextViewUnit"
+                        android:layout_marginLeft="1dp"
+                        android:text="r/min" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"></LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

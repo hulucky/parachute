@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+
+        android:layout_height="match_parent"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginTop="2dp"
+        android:background="#c1d8fb">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:background="@color/grayrport">
+
+
+                <RadioGroup
+                    android:layout_width="350dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/x5"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rb_res_jfh"
+                        android:layout_width="160dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left|center_vertical"
+                        android:layout_marginLeft="40dp"
+                        android:checked="true"
+                        android:text="静负荷数据" />
+
+                    <RadioButton
+                        android:id="@+id/rb_res_tg"
+                        android:layout_width="140dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left|center_vertical"
+                        android:layout_marginLeft="20dp"
+                        android:text="脱钩数据" />
+                </RadioGroup>
+
+                <ImageView
+                    android:id="@+id/img_res_message"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="@dimen/x50"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/message" />
+
+                <ImageView
+                    android:id="@+id/img_res_report"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="@dimen/x10"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/report" />
+            </LinearLayout>
+
+            <TextView style="@style/splite_line" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:gravity="center_vertical">
+
+                <android.support.v7.widget.AppCompatSpinner
+                    android:id="@+id/sp_res_datalist"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="30dp"
+                    android:layout_weight="2.5"
+                    android:background="@color/spinner"></android.support.v7.widget.AppCompatSpinner>
+
+                <CheckBox
+                    android:id="@+id/ck_res_choose"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_weight="1"
+
+                    android:text="导入报告" />
+
+            </LinearLayout>
+
+            <TextView style="@style/splite_line" />
+
+            <LinearLayout
+                android:id="@+id/ly_res_tgsj"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+
+                    <FrameLayout
+                        android:id="@+id/fl_res_jsdcurve"
+                        android:layout_width="480dp"
+                        android:layout_height="250dp"
+                        android:background="@color/lightblue"></FrameLayout>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    style="@style/LinearLayout_style_testanalsy_block"
+                    android:layout_width="match_parent"
+                    android:layout_height="110dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout style="@style/ly_res_row">
+
+                        <TextView
+                            style="@style/style_res_name"
+                            android:text="加    速    度:" />
+
+                        <TextView
+                            android:id="@+id/tv_res_tg_jsd"
+                            style="@style/style_res_length" />
+
+                        <View style="@style/split_vetical" />
+
+                        <TextView
+                            style="@style/style_res_name"
+                            android:text="平均加速度:" />
+
+                        <TextView
+                            android:id="@+id/tv_res_tg_pjjsd"
+                            style="@style/style_res_length" />
+                    </LinearLayout>
+
+                    <TextView style="@style/splite_line" />
+
+                    <LinearLayout style="@style/ly_res_row">
+
+                        <TextView
+                            style="@style/style_res_name"
+                            android:text="空行程时间:" />
+
+                        <TextView
+                            android:id="@+id/tv_res_tg_kxcsj"
+                            style="@style/style_res_length" />
+
+                        <View style="@style/split_vetical" />
+
+                        <TextView
+                            style="@style/style_res_name"
+                            android:text="空行程距离:" />
+
+                        <TextView
+                            android:id="@+id/tv_res_tg_kxcjl"
+                            style="@style/style_res_length" />
+                    </LinearLayout>
+
+                    <TextView style="@style/splite_line" />
+
+                    <LinearLayout style="@style/ly_res_row">
+
+                        <TextView
+                            style="@style/style_res_name"
+
+                            android:text="制 动 时 间:" />
+
+                        <TextView
+                            android:id="@+id/tv_res_tg_zdsj"
+                            style="@style/style_res_length"
+                            android:layout_marginBottom="5dp" />
+
+                        <View
+                            style="@style/split_vetical"
+                            android:layout_marginBottom="5dp" />
+
+                        <TextView
+                            style="@style/style_res_name"
+                            android:text=" " />
+
+                        <TextView
+
+                            style="@style/style_res_length" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <TextView style="@style/splite_line" />
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/LinearLayout_style_testanalsy_block"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/x5"
+
+                android:paddingTop="@dimen/x5">
+
+                <LinearLayout style="@style/ly_res_row">
+
+                    <TextView
+                        style="@style/style_res_name"
+                        android:text="楔      块      1:" />
+
+                    <TextView
+                        android:id="@+id/tv_res_tg_length1"
+                        style="@style/style_res_length" />
+
+                    <View style="@style/split_vetical" />
+
+                    <TextView
+                        style="@style/style_res_name"
+                        android:text="楔      块     2:" />
+
+                    <TextView
+                        android:id="@+id/tv_res_tg_length2"
+                        style="@style/style_res_length" />
+                </LinearLayout>
+
+                <TextView style="@style/splite_line" />
+
+                <LinearLayout style="@style/ly_res_row">
+
+                    <TextView
+                        style="@style/style_res_name"
+                        android:text="相对缓冲绳1:" />
+
+                    <TextView
+                        android:id="@+id/tv_res_tg_length3"
+                        style="@style/style_res_length" />
+
+                    <View style="@style/split_vetical" />
+
+                    <TextView
+                        style="@style/style_res_name"
+                        android:text="相对缓冲绳2:" />
+
+                    <TextView
+                        android:id="@+id/tv_res_tg_length4"
+                        style="@style/style_res_length" />
+                </LinearLayout>
+
+                <TextView style="@style/splite_line" />
+
+                <LinearLayout style="@style/ly_res_row">
+
+                    <TextView
+                        style="@style/style_res_name"
+                        android:text="相对制动绳1:" />
+
+                    <TextView
+                        android:id="@+id/tv_res_tg_length5"
+                        style="@style/style_res_length" />
+
+                    <View style="@style/split_vetical" />
+
+                    <TextView
+                        style="@style/style_res_name"
+                        android:text="相对制动绳2:" />
+
+                    <TextView
+                        android:id="@+id/tv_res_tg_length6"
+                        style="@style/style_res_length" />
+
+                </LinearLayout>
+
+                <TextView style="@style/splite_line" />
+
+                <LinearLayout style="@style/ly_res_row">
+
+                    <TextView
+                        style="@style/style_res_name"
+                        android:text="下  降  高  度:" />
+
+                    <TextView
+                        android:id="@+id/tv_res_tg_length7"
+                        style="@style/style_res_length" />
+
+                    <View style="@style/split_vetical" />
+
+                    <TextView
+                        style="@style/style_res_name"
+                        android:text=" " />
+
+                    <TextView
+                        android:id="@+id/tv_res_tg_wy7"
+                        style="@style/style_res_length" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

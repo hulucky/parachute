@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="550dp"
+    android:layout_height="550dp"
+    android:background="@color/white_hint"
+    android:orientation="vertical" >
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:orientation="horizontal">
+        <TextView
+
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"></TextView>
+    <TextView
+        android:id="@+id/tv_tittle_testdatadetail_1"
+     android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_marginLeft="@dimen/x5"
+        android:text="通风机性能曲线"
+        android:textSize="16sp"
+        android:layout_marginTop="5dp"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/darkcyan"/>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="right|center_vertical"
+            android:layout_weight="1">
+
+
+        <ImageView
+            android:id="@+id/tv_curve_showgkd"
+            android:layout_height="35dp"
+            android:layout_width="35dp"
+          android:gravity="right"
+            android:background="@drawable/cgq_float_yc"></ImageView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+android:layout_marginRight="10dp"
+                android:text="工况点"/>
+        </LinearLayout>
+</LinearLayout>
+
+    <LinearLayout
+
+        android:layout_width="500dp"
+        android:layout_height="420dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="12dp"
+        android:background="@drawable/shape_bg_listview"
+        android:orientation="vertical" >
+        <LinearLayout
+            android:id="@+id/root"
+            android:layout_width="400dp"
+            android:layout_height="360dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

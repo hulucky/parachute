@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/x5"
+        android:paddingLeft="@dimen/x10"
+        android:paddingRight="@dimen/x10"
+        android:paddingTop="@dimen/x5">
+
+        <LinearLayout style="@style/ly_test_row">
+
+            <TextView
+                style="@style/style_test_name"
+                android:text="楔块1" />
+
+            <TextView
+                android:id="@+id/tv_test_jfh_length1"
+                style="@style/style_test_length" />
+            <View style="@style/split_vetical" />
+            <TextView
+                style="@style/style_test_wy"
+                android:text="位移" />
+
+            <TextView
+                android:id="@+id/tv_test_jfh_wy1"
+                style="@style/style_test_offset" />
+        </LinearLayout>
+        <TextView style="@style/splite_line" />
+        <LinearLayout style="@style/ly_test_row">
+
+            <TextView
+                style="@style/style_test_name"
+                android:text="楔块2" />
+
+            <TextView
+                android:id="@+id/tv_test_jfh_length2"
+                style="@style/style_test_length" />
+            <View style="@style/split_vetical" />
+            <TextView
+                style="@style/style_test_wy"
+                android:text="位移" />
+
+            <TextView
+                android:id="@+id/tv_test_jfh_wy2"
+                style="@style/style_test_offset" />
+        </LinearLayout>
+        <TextView style="@style/splite_line" />
+        <LinearLayout style="@style/ly_test_row">
+
+            <TextView
+                style="@style/style_test_name"
+                android:text="相对缓冲绳1" />
+
+            <TextView
+                android:id="@+id/tv_test_jfh_length3"
+                style="@style/style_test_length" />
+            <View style="@style/split_vetical" />
+            <TextView
+                style="@style/style_test_wy"
+                android:text="位移" />
+
+            <TextView
+                android:id="@+id/tv_test_jfh_wy3"
+                style="@style/style_test_offset" />
+        </LinearLayout>
+        <TextView style="@style/splite_line" />
+        <LinearLayout style="@style/ly_test_row">
+
+            <TextView
+                style="@style/style_test_name"
+                android:text="相对缓冲绳2" />
+
+            <TextView
+                android:id="@+id/tv_test_jfh_length4"
+                style="@style/style_test_length" />
+            <View style="@style/split_vetical" />
+            <TextView
+                style="@style/style_test_wy"
+                android:text="位移" />
+
+            <TextView
+                android:id="@+id/tv_test_jfh_wy4"
+                style="@style/style_test_offset" />
+        </LinearLayout>
+        <TextView style="@style/splite_line" />
+        <LinearLayout style="@style/ly_test_row">
+
+            <TextView
+                style="@style/style_test_name"
+                android:text="相对制动绳1" />
+
+            <TextView
+                android:id="@+id/tv_test_jfh_length5"
+                style="@style/style_test_length" />
+            <View style="@style/split_vetical" />
+            <TextView
+                style="@style/style_test_wy"
+                android:text="位移" />
+
+            <TextView
+                android:id="@+id/tv_test_jfh_wy5"
+                style="@style/style_test_offset" />
+        </LinearLayout>
+        <TextView style="@style/splite_line" />
+        <LinearLayout style="@style/ly_test_row">
+
+            <TextView
+                style="@style/style_test_name"
+                android:text="相对制动绳2" />
+
+            <TextView
+                android:id="@+id/tv_test_jfh_length6"
+                style="@style/style_test_length" />
+            <View style="@style/split_vetical" />
+            <TextView
+                style="@style/style_test_wy"
+                android:text="位移" />
+
+            <TextView
+                android:id="@+id/tv_test_jfh_wy6"
+                style="@style/style_test_offset" />
+        </LinearLayout>
+        <TextView style="@style/splite_line" />
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="qblc_pipe">
+        <item>500A</item>
+        <item>20A</item>
+
+    </string-array>
+    <string-array name="motortest_type">
+        <item>单瓦法</item>
+        <item>双瓦法</item>
+        <item>三瓦法</item>
+
+    </string-array>
+    <string-array name="test_type">
+        <item>风杯法</item>
+        <item>静压全压法</item>
+        <item>静压差法</item>
+    </string-array>
+    <string-array name="venti_type">
+        <item>抽出式</item>
+        <item>压入式</item>
+    </string-array>
+    <!--传动效率-->
+    <array name="array_cdxl">
+        <item>"1"</item>
+        <item>"0.99"</item>
+        <item>"0.98"</item>
+        <item>"0.97"</item>
+        <item>"0.96"</item>
+        <item>"0.95"</item>
+        <item>"0.94"</item>
+        <item>"0.93"</item>
+        <item>"0.92"</item>
+        <item>"0.91"</item>
+        <item>"0.90"</item>
+        <item>"0.89"</item>
+        <item>"0.88"</item>
+        <item>"0.87"</item>
+    </array>
+
+</resources>

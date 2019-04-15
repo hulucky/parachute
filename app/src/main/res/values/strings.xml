@@ -1,0 +1,170 @@
+<resources>
+    <string name="app_name">CZD13W矿用防坠器无线多参数测试仪</string>
+
+    <string name="title_activity_create_task">创建测试任务</string>
+
+
+    <string name="taskUnitName">受检单位名称</string>
+    <string name="gasPumpNumber">防坠器编号</string>
+    <string name="testPeople">测试员</string>
+    <string name="startTest">开 始 测 试</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+
+    <string name="function_test">测   试</string>
+    <string name="function_data">测试数据</string>
+    <string name="function_report">文书报告</string>
+    <string name="function_sensor">传 感 器</string>
+    <string name="function_stantard">检测标准</string>
+    <string name="function_back">退   出</string>
+
+
+    <string name="enterprise_name">徐州 · 矿一</string>
+    <string name="enterprise_web_adress">wwww.xzkydz.com</string>
+    <string name="instraction_document">说明文档</string>
+    <string name="product_information">产品信息</string>
+    <string name="after_sale_information">售后信息</string>
+    <string name="print_setting">打印</string>
+    <string name="enterprise_profile">企业简介</string>
+    <string name="setting">设置</string>
+    <string name="product">产品</string>
+    <string name="configration">配置</string>
+    <string name="else_config">其它</string>
+
+    <string name="back_system">再点一次退出系统</string>
+
+    <string name="title_activity_pdf_view">PDF文档</string>
+    <string name="title_activity_print_setting">蓝牙打印设置</string>
+    <string name="title_activity_product_inf">产品信息</string>
+    <string name="title_activity_after_sale">售后信息</string>
+    <string name="title_activity_setting_nav">设置</string>
+    <string name="title_activity_electrical_machinery">电机库</string>
+    <string name="title_activity_testing">测试</string>
+    <string name="title_activity_setting">测试参数</string>
+    <string name="title_activity_report">报告</string>
+    <string name="title_activity_data_manager">测试数据管理</string>
+    <string name="start_test">开 始 测 试</string>
+
+    <!--测试参数设置-->
+    <string name="setting_par">设置测试参数</string>
+    <string name="task_inf">任务信息</string>
+    <string name="flow_module_tittle">流量模块</string>
+    <string name="flow_module_tittle_parper">流量模块参数</string>
+    <string name="waterpump_tittle">水 泵</string>
+    <string name="waterpump_tittle_parper">电机参数</string>
+    <string name="electrical_machinery_tittle">电 机</string>
+    <string name="electrical_machinery_tittle_paper">电机参数</string>
+    <string name="assist_parameter">辅助仪器测试量</string>
+    <string name="electrical_machinery_para_input">输入量</string>
+    <string name="setup_way_sensor">安装方式:</string>
+    <string name="pipeline_diameter">管道外径:</string>
+    <string name="pipe_thickness">管壁厚度:</string>
+    <string name="pipe_material">管道材质:</string>
+    <string name="fluid_type">流体类型:</string>
+    <string name="drainage_height">排水高度:</string>
+    <string name="suction_height">吸水高度:</string>
+    <string name="table_diff">"表  位  差:"</string>
+    <string name="pump_caliber">电机口径:</string>
+    <string name="pump_series">电机级数:</string>
+    <string name="motor_type">电机型号:</string>
+    <string name="clamp_table_range">钳表量程:</string>
+    <string name="measuring_method">测试方法:</string>
+    <string name="connection_type">连接方式:</string>
+    <string name="kind_of_drive">传动方式:</string>
+    <string name="ratio">电压变比:</string>
+    <string name="ratio_current">电流变比:</string>
+    <string name="start_testing">开始测试</string>
+    <string name="rated_power">额定功率:</string>
+    <string name="nominal_voltage">额定电压:</string>
+    <string name="press_in">进口压力:</string>
+    <string name="press_out">出口压力:</string>
+    <string name="motor_power">电机功率:</string>
+    <string name="flow_water_instant">瞬时流量:</string>
+    <string name="tem_diff">温差:</string>
+    <string name="motor_efficiency">电机效率:</string>
+
+    <string name="test_press">压力采集</string>
+
+
+    <string name="ignore">忽略</string>
+    <string name="search">查询</string>
+    <string name="shake">震动</string>
+    <string name="noise">噪声</string>
+    <string name="rotate">转速</string>
+
+    <string name="mm">"mm "</string>
+    <string name="per">"%  "</string>
+    <string name="m">"m   "</string>
+    <string name="MPa">"MPa"</string>
+    <string name="kW">"kW "</string>
+    <string name="m3h">"m³/h"</string>
+    <string name="empty">"   "</string>
+
+
+    <string name="instruction_pre">启动后可以在电脑端无线管理报告文档</string>
+    <string name="instruction_pre_inf">（ 本设备与电脑必须在同一局域网，传输中不可以关闭本页 ）</string>
+    <string name="instruction">请在“我的电脑”地址栏中输入：</string>
+    <string name="no_wifi">无WiFi网络</string>
+    <string name="no_wifi_hint">无WiFi网络,点击WiFi图标以查看WiFi设置</string>
+    <string name="wifi_state">WiFi状态</string>
+    <string name="start_server">启动连接</string>
+    <string name="stop_server">断开连接</string>
+    <string name="notif_server_starting">远程管理服务已启动</string>
+    <string name="notif_title">远程管理服务正在运行</string>
+    <string name="storage_warning">外部存储不可用.</string>
+
+
+    <string name="task_all">全部任务</string>
+    <string name="task_unfinished">未完成任务</string>
+    <string name="task_input">数据录入</string>
+
+    <string name="search_way">搜索条件:</string>
+    <string name="search4date">测试时间</string>
+    <string name="search4unit">受检单位</string>
+
+    <string name="task_unit">受检单位</string>
+    <string name="task_waterpump">电机编号</string>
+    <string name="task_person">检测人员</string>
+    <string name="task_time">测试时间</string>
+    <string name="task_statue">任务状态</string>
+    <string name="finished">完成</string>
+    <string name="unfinished">未完成</string>
+
+    <string name="search_task_all">全部任务</string>
+    <string name="search_task_unfinished">未完成任务</string>
+    <string name="search_task_last">最近一次任务</string>
+
+
+    <string name="judge_djjs">->  "[ "  "电机级数"  " ] :"  "必须大于零\n"</string>
+    <string name="judge_djxh">  ->  "[ "  "电机型号"  " ] :"  "请选择电机型号\n"</string>
+    <string name="judge_dybb">  ->  "[ "  "电压变比"  " ] :"  "必须大于零\n"</string>
+    <string name="judge_dlbb">  ->  "[ "  "电流变比"  " ] :"  "必须大于零\n"</string>
+
+    <string name="judge_djgl">  ->  "[ "  "电机功率"  " ] :"  "必须大于零\n"</string>
+    <string name="judge_shshll">->  "[ "  "瞬时流量"  " ] :"  "必须大于零\n"</string>
+    <string name="judge_djxl">  ->  "[ "  "电机效率"  " ] :"  "取值范围（ 0 ~ 100% ）\n"</string>
+
+    <!--测试界面的字符串-->
+    <string name="parameter">参数</string>
+    <string name="test">测试</string>
+    <string name="testData">测试数据</string>
+
+
+    <!--字符串-->
+    <string name="test_parameter">参数</string>
+    <string name="test_testing">测试</string>
+    <string name="test_data">数据</string>
+
+
+    <string name="title_activity_test">测试</string>
+
+    <!--测试参数展示-->
+    <string name="task_llj">流量计参数</string>
+    <string name="task_dj">电机1参数</string>
+    <string name="task_dj2">电机2参数</string>
+
+</resources>

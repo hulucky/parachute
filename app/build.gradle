@@ -1,0 +1,74 @@
+apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao' // apply plugin
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "com.xzkydz.parachute2"
+        minSdkVersion 19
+        targetSdkVersion 27
+        versionCode 1 // Apk版本号 ：正整数，且新APK必须大于旧版APK才可以覆盖安装。
+        versionName "V2.19.04.10.0001" //APK版本名称：V2.18.08.23.0001 ，用于区分APK的版本。
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", "x86"
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets {
+        main {
+            //jni库的调用会到资源文件夹下libs里面找so文件
+            jniLibs.srcDirs = ['src/main/jni']
+          jni.srcDirs=[]
+
+        }
+    }
+}
+
+// 在APP 根目录的 build.gradle 文件中添加闭包：
+greendao {
+    // 指定数据库schema版本号，迁移等操作会用到；
+    schemaVersion 1
+    //通过gradle插件生成的数据库相关文件的包名，默认为你的entity所在的包名；
+    daoPackage 'com.greendao.manager'
+    //自定义生成数据库文件的目录，可以将生成的文件放到我们的java目录中，
+    //而不是build中，这样就不用额外的设置资源目录了。
+    targetGenDir 'src/main/java'
+}
+
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:27.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'org.greenrobot:greendao:3.2.2'
+    // add librarycom.gitee.xzkydz:PublicUI:v2.0.5-anr
+    implementation'com.gitee.xzkydz:PublicUI:v2.0.5-anr'
+
+//   implementation 'com.gitee.xzkydz:PublicUI:v2.0.2'
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    // 设置沉浸式菜单栏
+    implementation 'com.jaeger.statusbarutil:library:1.5.0'
+    // MarkdownView
+    implementation 'com.github.tiagohm.MarkdownView:library:0.19.0'
+    implementation 'com.ldoublem.loadingview:loadingviewlib:1.0'
+    implementation 'com.github.GrenderG:Toasty:1.3.0'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.12'
+    implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
+    implementation 'com.github.yknn:SensorView:v1.19'
+//   implementation 'com.github.yknn:SerialPortControl:v1.0'
+    implementation 'com.github.barteksc:android-pdf-viewer:2.4.0'
+    implementation files('libs/CrashHelper.jar')
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.12'
+
+}
