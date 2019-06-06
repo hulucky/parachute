@@ -23,13 +23,10 @@ import butterknife.Unbinder;
 
 public class TestWyfragment extends Fragment {
 
-
     DecimalFormat df4 = new DecimalFormat("####0.0");
     TestActivity mActivity;
     Unbinder unbinder;
 
-
-    boolean showfb = true;
     @BindView(R.id.tv_test_tg_length1)
     TextView tvTestTgLength1;
     @BindView(R.id.tv_test_tg_wy1)
@@ -76,15 +73,11 @@ public class TestWyfragment extends Fragment {
 
     }
 
-
-
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
     }
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -92,32 +85,60 @@ public class TestWyfragment extends Fragment {
 //        setUserVisibleHint(true);
     }
 
-
     public void refresh() {
-
         try {
-            tvTestTgLength1.setText(mActivity.getShowLength()[1]);
-            tvTestTgWy1.setText(mActivity.getShowWy()[1]);
+            tvTestTgLength1.setText(mActivity.getShowLengthTg()[0]);
+            tvTestTgWy1.setText(mActivity.getShowWyTg()[0]);
 
-            tvTestTgLength2.setText(mActivity.getShowLength()[2]);
-            tvTestTgWy2.setText(mActivity.getShowWy()[2]);
+            tvTestTgLength2.setText(mActivity.getShowLengthTg()[1]);
+            tvTestTgWy2.setText(mActivity.getShowWyTg()[1]);
 
-            tvTestTgLength3.setText(mActivity.getShowLength()[3]);
-            tvTestTgWy3.setText(mActivity.getShowWy()[3]);
+            tvTestTgLength3.setText(mActivity.getShowLengthTg()[2]);
+            tvTestTgWy3.setText(mActivity.getShowWyTg()[2]);
 
-            tvTestTgLength4.setText(mActivity.getShowLength()[4]);
-            tvTestTgWy4.setText(mActivity.getShowWy()[4]);
+            tvTestTgLength4.setText(mActivity.getShowLengthTg()[3]);
+            tvTestTgWy4.setText(mActivity.getShowWyTg()[3]);
 
-            tvTestTgLength5.setText(mActivity.getShowLength()[5]);
-            tvTestTgWy5.setText(mActivity.getShowWy()[5]);
+            tvTestTgLength5.setText(mActivity.getShowLengthTg()[4]);
+            tvTestTgWy5.setText(mActivity.getShowWyTg()[4]);
 
-            tvTestTgLength6.setText(mActivity.getShowLength()[6]);
-            tvTestTgWy6.setText(mActivity.getShowWy()[6]);
+            tvTestTgLength6.setText(mActivity.getShowLengthTg()[5]);
+            tvTestTgWy6.setText(mActivity.getShowWyTg()[5]);
 
-            tvTestTgLength7.setText(mActivity.getShowLength()[7]);
-            tvTestTgWy7.setText(mActivity.getShowWy()[7]);
+            tvTestTgLength7.setText(mActivity.getShowLengthTg()[6]);
+            tvTestTgWy7.setText(mActivity.getShowWyTg()[6]);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    public void refreshNull() {
+        if (tvTestTgLength1 != null && tvTestTgWy1 != null) {
+            tvTestTgLength1.setText("--");
+            tvTestTgWy1.setText("--");
+        }
+        if (tvTestTgLength2 != null && tvTestTgWy2 != null) {
+            tvTestTgLength2.setText("--");
+            tvTestTgWy2.setText("--");
+        }
+        if (tvTestTgLength3 != null && tvTestTgWy3 != null) {
+            tvTestTgLength3.setText("--");
+            tvTestTgWy3.setText("--");
+        }
+        if (tvTestTgLength4 != null && tvTestTgWy4 != null) {
+            tvTestTgLength4.setText("--");
+            tvTestTgWy4.setText("--");
+        }
+        if (tvTestTgLength5 != null && tvTestTgWy5 != null) {
+            tvTestTgLength5.setText("--");
+            tvTestTgWy5.setText("--");
+        }
+        if (tvTestTgLength6 != null && tvTestTgWy6 != null) {
+            tvTestTgLength6.setText("--");
+            tvTestTgWy6.setText("--");
+        }
+        if (tvTestTgLength7 != null && tvTestTgWy7 != null) {
+            tvTestTgLength7.setText("--");
+            tvTestTgWy7.setText("--");
         }
     }
 }

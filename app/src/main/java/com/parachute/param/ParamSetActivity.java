@@ -1,5 +1,6 @@
 package com.parachute.param;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -182,7 +183,7 @@ public class ParamSetActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         StatusBarUtil.setColor(ParamSetActivity.this, getResources().getColor(R.color.tittleBar), 0);
-        setDamp();
+        setDamp();//头布局展示
         collapsingToolbarLayout.setTitle(getResources().getString(R.string.title_activity_create_task));
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -191,6 +192,7 @@ public class ParamSetActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+        //spinner，界面未显示
         spmcsff1.setSelection(2);
         spmcsff2.setSelection(2);
     }
@@ -199,22 +201,18 @@ public class ParamSetActivity extends AppCompatActivity {
     protected void onPostResume() {
         super.onPostResume();
 
-
     }
 
-
-//
-
-
-
+    //头布局展示
+    @SuppressLint("ClickableViewAccessibility")
     public void setDamp() {
         nestedscrollview.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
 
                 if (motionEvent.getAction() == KeyEvent.ACTION_UP) {
-                    appBar.setExpanded((openlimit > -170 ? true : false), true);
-                    if (openlimit > -170 ? true : false) {
+                    appBar.setExpanded((openlimit > -170), true);
+                    if (openlimit > -170) {
                         llTittle.setAlpha(1);
                         collapsingToolbarLayout.setTitle("");
                     } else {
@@ -222,7 +220,6 @@ public class ParamSetActivity extends AppCompatActivity {
                     }
                     return true;
                 }
-
                 return false;
             }
         });
@@ -247,23 +244,21 @@ public class ParamSetActivity extends AppCompatActivity {
     @OnClick({R.id.fab, R.id.btn_go_test, R.id.img_param_rwxx, R.id.tv_param_djxl1, R.id.tv_param_djxl2})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.fab:
+            case R.id.fab://悬浮按钮
                 Intent intent = new Intent();
                 intent.setClass(ParamSetActivity.this, com.parachute.param.HistoryTaskSearchActivity.class);
                 startActivityForResult(intent, ConstantData.HistoryTask_resultCode);
                 break;
-            case R.id.btn_go_test:
-                // 参数合理性检测
-
-                    SaveTask();
-                    Intent intent1 = new Intent();
-
-                    Toasty.success(ParamSetActivity.this, "开始测试！").show();
-                    intent1.setClass(ParamSetActivity.this, TestActivity.class);
-                    startActivity(intent1);
+            case R.id.btn_go_test://开始测试
+                // 参数合理性检测并新建任务
+                SaveTask();
+                Intent intent1 = new Intent();
+                Toasty.success(ParamSetActivity.this, "开始测试！").show();
+                intent1.setClass(ParamSetActivity.this, TestActivity.class);
+                startActivity(intent1);
 
                 break;
-            case R.id.img_param_rwxx:
+            case R.id.img_param_rwxx://收还是放,未触发
                 if (ParamIsSet) {
                     lyset.setVisibility(View.GONE);
                     imageRwxx.setImageResource(R.drawable.rwxx_icon_open);
@@ -274,13 +269,13 @@ public class ParamSetActivity extends AppCompatActivity {
                     ParamIsSet = true;
                 }
                 break;
-            case R.id.tv_param_djxl1:
+            case R.id.tv_param_djxl1://未触发
                 myApp.getInstance().setIsSetMotor1(true);
                 intent = new Intent();
                 intent.setClass(ParamSetActivity.this, MotorSelectorActivity.class);
                 startActivityForResult(intent, ConstantData.Motor_requestCode);
                 break;
-            case R.id.tv_param_djxl2:
+            case R.id.tv_param_djxl2://未触发
                 myApp.getInstance().setIsSetMotor1(false);
                 intent = new Intent();
                 intent.setClass(ParamSetActivity.this, MotorSelectorActivity.class);
@@ -288,9 +283,8 @@ public class ParamSetActivity extends AppCompatActivity {
 
         }
     }
-
+    // 参数合理性检测
     private void SaveTask() {
-
         try {
             if (!etTaskName.getText().toString().equals("")) {
                 mTask.setUnitName(etTaskName.getText().toString());
@@ -307,19 +301,13 @@ public class ParamSetActivity extends AppCompatActivity {
             } else {
                 mTask.setPeopleName("未设定人员");
             }
-
-
-                mTask.setCsff(" ");
-
-
-
-
+            mTask.setCsff(" ");
+            //创建时间
             if (!mTask.get_IsCompleteTask()) {
-
                 mTask.setGreateTaskTime(DateUtil.getGreatedTaskTime());
-
             }
             TaskEntity tmpTask = new TaskEntity();
+            //把mTask拷贝到tmpTask
             CopyTask(tmpTask, mTask);
             tmpTask.setGreateTaskTime(DateUtil.getGreatedTaskTime());
             new GreateTaskUtils().insert(tmpTask);
@@ -327,8 +315,6 @@ public class ParamSetActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     //EditText的监听器
@@ -496,29 +482,26 @@ public class ParamSetActivity extends AppCompatActivity {
         int motorResultCode = ConstantData.Motor_resultCode; //
 
         switch (resultCode) {
-
-
             case 55: // 历史任务返回码  ConstantData.HistoryTask_resultCode
                 Long taskId = data.getLongExtra(ConstantData.HistoryTask_ID_resultCode, 1L);
                 GreateTaskUtils greateTaskUtils = new GreateTaskUtils();
                 // 这个只是复用参数的历史任务，参数有可能在此基础上更改，不一定就是测试任务。
-
-
                 TaskEntity mmTask = greateTaskUtils.query(taskId);
                 if (mmTask.get_IsCompleteTask() == true) {
                     mTask = new TaskEntity();
                 }
+                //第二个拷贝给第一个
                 CopyTask(mTask, mmTask);
+                //复用任务填充edittext
                 this.setParForHistoryTask(mTask);
-
                 break;
             default:
                 break;
         }
     }
 
+    //第二个拷贝给第一个
     private void CopyTask(TaskEntity mTask, TaskEntity mmTask) {
-
         mTask.setBy12(mmTask.getBy12());
         mTask.setBy11(mmTask.getBy11());
         mTask.setBy10(mmTask.getBy10());
@@ -542,19 +525,14 @@ public class ParamSetActivity extends AppCompatActivity {
 
     }
 
+    //复用任务填充edittext
     public void setParForHistoryTask(TaskEntity taskEnity) {
-
-
         try {
             etTaskName.setText(taskEnity.getUnitName());
             etNumber.setText(taskEnity.getGasePumpNumber());
             etPeopleName.setText(taskEnity.getPeopleName());
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 }

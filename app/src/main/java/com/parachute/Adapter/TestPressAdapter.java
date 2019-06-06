@@ -26,15 +26,10 @@ public class TestPressAdapter extends BaseAdapter {
     private List<PressBean> list;
 
 
-
-
-
     public TestPressAdapter(TestActivity mContext,List<PressBean> mlist) {
         super();
         this.mContext = mContext;
        this.list=mlist;
-
-
     }
 
     @Override

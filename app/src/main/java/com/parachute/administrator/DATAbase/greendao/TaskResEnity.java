@@ -7,26 +7,15 @@ import org.greenrobot.greendao.annotation.Unique;
 
 @Entity
 public class TaskResEnity {
-
-    //    @Entity：告诉GreenDao该对象为实体，只有被@Entity注释的Bean类才能被dao类操作
-    //    @Id：对象的Id，使用Long类型作为EntityId，否则会报错。(autoincrement = true)表示主键会自增，如果false就会使用旧值
-    //    @Property：可以自定义字段名，注意外键不能使用该属性
-    //    @NotNull：属性不能为空
-    //    @Transient：使用该注释的属性不会被存入数据库的字段中
-    //    @Unique：该属性值必须在数据库中是唯一值
-    //    @Generated：编译后自动生成的构造函数、方法等的注释，提示构造函数、方法等不能被修改
-
     //不能用int
     @Id(autoincrement = true)
     private Long id;
-
     private Long taskId;
     private String csff; // 测试方法
     private String tffs; // 通风方式
     private int saveIndex;
     private String SaveTime;
     private int saveType;//0 静负荷 1脱钩
-
 
     private float xk1;
     private float xk2;
@@ -37,11 +26,11 @@ public class TaskResEnity {
 
     private float xjgd;
     private String curve;
-    private float zdjsd;
-    private float pjjsd;
-    private float kxcsj;
-    private float kxcjl;
-    private float zdsj;
+    private float zdjsd;//  ？？加速度
+    private float pjjsd;//  ？？加速度
+    private float kxcsj;//空行程时间
+    private float kxcjl;//空行程距离
+    private float zdsj;//制动时间
 
     @Generated(hash = 1994661030)
     public TaskResEnity(Long id, Long taskId, String csff, String tffs, int saveIndex,
@@ -233,6 +222,4 @@ public class TaskResEnity {
     public void setZdsj(float zdsj) {
         this.zdsj = zdsj;
     }
-
-
 }

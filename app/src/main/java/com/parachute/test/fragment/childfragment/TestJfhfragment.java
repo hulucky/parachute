@@ -62,8 +62,6 @@ public class TestJfhfragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_test_testjfh, null);
         mActivity = (TestActivity) getParentFragment().getActivity();
         unbinder = ButterKnife.bind(this, view);
-
-
         return view;
     }
 
@@ -96,30 +94,51 @@ public class TestJfhfragment extends Fragment {
 
 
     public void refresh() {
+        tvTestJfhLength1.setText(mActivity.getShowLength()[0]);
+        tvTestJfhWy1.setText(mActivity.getShowWy()[0]);
 
-        try {
-            tvTestJfhLength1.setText(mActivity.getShowLength()[1]);
-            tvTestJfhWy1.setText(mActivity.getShowWy()[1]);
+        tvTestJfhLength2.setText(mActivity.getShowLength()[1]);
+        tvTestJfhWy2.setText(mActivity.getShowWy()[1]);
 
-            tvTestJfhLength2.setText(mActivity.getShowLength()[2]);
-            tvTestJfhWy2.setText(mActivity.getShowWy()[2]);
+        tvTestJfhLength3.setText(mActivity.getShowLength()[2]);
+        tvTestJfhWy3.setText(mActivity.getShowWy()[2]);
 
-            tvTestJfhLength3.setText(mActivity.getShowLength()[3]);
-            tvTestJfhWy3.setText(mActivity.getShowWy()[3]);
+        tvTestJfhLength4.setText(mActivity.getShowLength()[3]);
+        tvTestJfhWy4.setText(mActivity.getShowWy()[3]);
 
-            tvTestJfhLength4.setText(mActivity.getShowLength()[4]);
-            tvTestJfhWy4.setText(mActivity.getShowWy()[4]);
+        tvTestJfhLength5.setText(mActivity.getShowLength()[4]);
+        tvTestJfhWy5.setText(mActivity.getShowWy()[4]);
 
-            tvTestJfhLength5.setText(mActivity.getShowLength()[5]);
-            tvTestJfhWy5.setText(mActivity.getShowWy()[5]);
+        tvTestJfhLength6.setText(mActivity.getShowLength()[5]);
+        tvTestJfhWy6.setText(mActivity.getShowWy()[5]);
+    }
 
-            tvTestJfhLength6.setText(mActivity.getShowLength()[6]);
-            tvTestJfhWy6.setText(mActivity.getShowWy()[6]);
-        } catch (Exception e) {
-            e.printStackTrace();
+
+    public void refreshNull() {
+        if (tvTestJfhLength1 != null && tvTestJfhWy1 != null) {
+            tvTestJfhLength1.setText("--");
+            tvTestJfhWy1.setText("--");
         }
-
-
+        if (tvTestJfhLength2 != null && tvTestJfhWy2 != null) {
+            tvTestJfhLength2.setText("--");
+            tvTestJfhWy2.setText("--");
+        }
+        if (tvTestJfhLength3 != null && tvTestJfhWy3 != null) {
+            tvTestJfhLength3.setText("--");
+            tvTestJfhWy3.setText("--");
+        }
+        if (tvTestJfhLength4 != null && tvTestJfhWy4 != null) {
+            tvTestJfhLength4.setText("--");
+            tvTestJfhWy4.setText("--");
+        }
+        if (tvTestJfhLength5 != null && tvTestJfhWy5 != null) {
+            tvTestJfhLength5.setText("--");
+            tvTestJfhWy5.setText("--");
+        }
+        if (tvTestJfhLength6 != null && tvTestJfhWy6 != null) {
+            tvTestJfhLength6.setText("--");
+            tvTestJfhWy6.setText("--");
+        }
     }
 
     @Override

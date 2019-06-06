@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.ViewUtils;
 import android.text.format.Time;
 import android.view.Gravity;
 import android.view.View;
@@ -17,9 +15,19 @@ import android.widget.TextView;
 import com.greendao.manager.DaoMaster;
 import com.greendao.manager.DaoSession;
 import com.greendao.manager.MotorTxtToDb;
-import com.nrs.utils.tools.CrashHandler;
 import com.parachute.administrator.DATAbase.R;
 import com.parachute.administrator.DATAbase.greendao.TaskEntity;
+import com.parachute.bean.JsdBean1;
+import com.parachute.bean.JsdBean7;
+import com.parachute.bean.WyBean1;
+import com.parachute.bean.WyBean2;
+import com.parachute.bean.WyBean3;
+import com.parachute.bean.WyBean4;
+import com.parachute.bean.WyBean5;
+import com.parachute.bean.WyBean6;
+import com.parachute.bean.WyBean7;
+import com.tencent.bugly.Bugly;
+import com.xzkydz.bean.ComBean;
 import com.xzkydz.function.app.KyApp;
 import com.xzkydz.function.style.AppStyle;
 import com.xzkydz.function.utils.SharedPreferencesUtils;
@@ -30,6 +38,37 @@ public class MyApp extends KyApp {
     private static TaskEntity taskEntity = new TaskEntity(); //测试任务
     private static Boolean isSetMotor1;
     private Integer[] sensorstate;
+
+    public static boolean wy1Connected;
+    public static boolean wy2Connected;
+    public static boolean wy3Connected;
+    public static boolean wy4Connected;
+    public static boolean wy5Connected;
+    public static boolean wy6Connected;
+    public static boolean wy7Connected;
+    public static boolean jsdConnected;
+    public static ComBean comBeanWy1;//楔块1
+    public static ComBean comBeanWy2;//楔块2
+    public static ComBean comBeanWy3;//制动1
+    public static ComBean comBeanWy4;//制动2
+    public static ComBean comBeanWy5;//缓冲1
+    public static ComBean comBeanWy6;//缓冲2
+    public static ComBean comBeanWy7;//下降高度
+    public static ComBean comBeanJsd1;//
+    public static ComBean comBeanJsd7;//
+    public static WyBean1 wyBean1;
+    public static WyBean2 wyBean2;
+    public static WyBean3 wyBean3;
+    public static WyBean4 wyBean4;
+    public static WyBean5 wyBean5;
+    public static WyBean6 wyBean6;
+    public static WyBean7 wyBean7;
+    public static JsdBean1 jsdBean1;
+    public static JsdBean7 jsdBean7;
+
+    public static boolean IsBusy;
+    public static boolean IsReady;
+    public static boolean IsWait;
 
     public static String getSnapName() {
         return snapName;
@@ -95,7 +134,6 @@ public class MyApp extends KyApp {
     }
 
     @Override
-
     public void onCreate() {
         super.onCreate();
 
@@ -103,35 +141,33 @@ public class MyApp extends KyApp {
         initAllData();
         insertTxtMotor();
         mInstance = MyApp.this;
-        CrashHandler crashHandler = CrashHandler.getInstance();
-        crashHandler.init(this);
-        sensorstate=new Integer[21];
-        for(int i=0;i<21;i++)
-        {
-            sensorstate[i]=0;
+//        CrashHandler crashHandler = CrashHandler.getInstance();
+//        crashHandler.init(this);
+        Bugly.init(getApplicationContext(), "e6aab94296", false);
+        sensorstate = new Integer[21];
+        for (int i = 0; i < 21; i++) {
+            sensorstate[i] = 0;
         }
 
 
     }
-    public void SetSensorConnectStateFalse(Integer mindex)
-    {
-        sensorstate[mindex]=0;
+
+    public void SetSensorConnectStateFalse(Integer mindex) {
+        sensorstate[mindex] = 0;
     }
-    public void SetSensorConnectStateTrue(Integer mindex)
-    {
-        sensorstate[mindex]=1;
+
+    public void SetSensorConnectStateTrue(Integer mindex) {
+        sensorstate[mindex] = 1;
     }
 
     public Integer getSensorstateByIndex(Integer mindex) {
         return sensorstate[mindex];
     }
 
-    public  Integer getAllSensorDisconnect(Integer findex,Integer eindex)
-    {
-        Integer res=0;
-        for (int i=findex;i<=eindex;i++)
-        {
-            res=res+sensorstate[i];
+    public Integer getAllSensorDisconnect(Integer findex, Integer eindex) {
+        Integer res = 0;
+        for (int i = findex; i <= eindex; i++) {
+            res = res + sensorstate[i];
         }
         return res;
     }
@@ -264,22 +300,28 @@ public class MyApp extends KyApp {
         return (int) (dp * density + 0.5f);
     }
 
-    String strtest="";
+    String strtest = "";
+
     public void setStrTest(String s) {
-        strtest=s;
+        strtest = s;
     }
-    public String getStrTest()
-    {
+
+    public String getStrTest() {
         return strtest;
     }
-    String strstate="";
+
+    String strstate = "";
+
     public void setStrTest1(String s) {
-        strstate+=s;
+        strstate += s;
     }
-    public void initStrstate()
-    {
-        strstate="";
+
+    public void initStrstate() {
+        strstate = "";
     }
-    public String getStrstate(){return  strstate;}
+
+    public String getStrstate() {
+        return strstate;
+    }
 }
 

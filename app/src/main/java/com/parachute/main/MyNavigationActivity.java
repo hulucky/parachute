@@ -98,4 +98,3 @@ public class MyNavigationActivity extends NavigationActivity{
         return VMarkdownActivity.class;
     }
 }
-

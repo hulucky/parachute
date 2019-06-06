@@ -6,7 +6,6 @@
     android:orientation="vertical">
 
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,7 +25,9 @@
             <TextView
                 android:id="@+id/tv_test_tg_length1"
                 style="@style/style_test_length" />
+
             <View style="@style/split_vetical" />
+
             <TextView
                 style="@style/style_test_wy"
                 android:text="位移" />
@@ -35,7 +36,9 @@
                 android:id="@+id/tv_test_tg_wy1"
                 style="@style/style_test_offset" />
         </LinearLayout>
+
         <TextView style="@style/splite_line" />
+
         <LinearLayout style="@style/ly_test_row">
 
             <TextView
@@ -45,7 +48,9 @@
             <TextView
                 android:id="@+id/tv_test_tg_length2"
                 style="@style/style_test_length" />
+
             <View style="@style/split_vetical" />
+
             <TextView
                 style="@style/style_test_wy"
                 android:text="位移" />
@@ -54,17 +59,21 @@
                 android:id="@+id/tv_test_tg_wy2"
                 style="@style/style_test_offset" />
         </LinearLayout>
+
         <TextView style="@style/splite_line" />
+
         <LinearLayout style="@style/ly_test_row">
 
             <TextView
                 style="@style/style_test_name"
-                android:text="相对缓冲绳1" />
+                android:text="相对制动绳1" />
 
             <TextView
                 android:id="@+id/tv_test_tg_length3"
                 style="@style/style_test_length" />
+
             <View style="@style/split_vetical" />
+
             <TextView
                 style="@style/style_test_wy"
                 android:text="位移" />
@@ -73,17 +82,21 @@
                 android:id="@+id/tv_test_tg_wy3"
                 style="@style/style_test_offset" />
         </LinearLayout>
+
         <TextView style="@style/splite_line" />
+
         <LinearLayout style="@style/ly_test_row">
 
             <TextView
                 style="@style/style_test_name"
-                android:text="相对缓冲绳2" />
+                android:text="相对制动绳2" />
 
             <TextView
                 android:id="@+id/tv_test_tg_length4"
                 style="@style/style_test_length" />
+
             <View style="@style/split_vetical" />
+
             <TextView
                 style="@style/style_test_wy"
                 android:text="位移" />
@@ -92,17 +105,21 @@
                 android:id="@+id/tv_test_tg_wy4"
                 style="@style/style_test_offset" />
         </LinearLayout>
+
         <TextView style="@style/splite_line" />
+
         <LinearLayout style="@style/ly_test_row">
 
             <TextView
                 style="@style/style_test_name"
-                android:text="相对制动绳1" />
+                android:text="相对缓冲绳1" />
 
             <TextView
                 android:id="@+id/tv_test_tg_length5"
                 style="@style/style_test_length" />
+
             <View style="@style/split_vetical" />
+
             <TextView
                 style="@style/style_test_wy"
                 android:text="位移" />
@@ -111,17 +128,21 @@
                 android:id="@+id/tv_test_tg_wy5"
                 style="@style/style_test_offset" />
         </LinearLayout>
+
         <TextView style="@style/splite_line" />
+
         <LinearLayout style="@style/ly_test_row">
 
             <TextView
                 style="@style/style_test_name"
-                android:text="相对制动绳2" />
+                android:text="相对缓冲绳2" />
 
             <TextView
                 android:id="@+id/tv_test_tg_length6"
                 style="@style/style_test_length" />
+
             <View style="@style/split_vetical" />
+
             <TextView
                 style="@style/style_test_wy"
                 android:text="位移" />
@@ -129,7 +150,10 @@
             <TextView
                 android:id="@+id/tv_test_tg_wy6"
                 style="@style/style_test_offset" />
-        </LinearLayout>     <TextView style="@style/splite_line" />
+        </LinearLayout>
+
+        <TextView style="@style/splite_line" />
+
         <LinearLayout style="@style/ly_test_row">
 
             <TextView
@@ -139,7 +163,9 @@
             <TextView
                 android:id="@+id/tv_test_tg_length7"
                 style="@style/style_test_length" />
+
             <View style="@style/split_vetical" />
+
             <TextView
                 style="@style/style_test_wy"
                 android:text="位移" />
@@ -147,10 +173,10 @@
             <TextView
                 android:id="@+id/tv_test_tg_wy7"
                 style="@style/style_test_offset" />
-        </LinearLayout>     <TextView style="@style/splite_line" />
+        </LinearLayout>
+
+        <TextView style="@style/splite_line" />
     </LinearLayout>
-
-
 
 
 </LinearLayout>

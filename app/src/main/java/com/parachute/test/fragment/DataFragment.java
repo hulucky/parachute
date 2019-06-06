@@ -4,7 +4,6 @@ package com.parachute.test.fragment;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -17,7 +16,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSpinner;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,9 +28,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.greendao.manager.DataFZQ;
 import com.greendao.manager.TaskResEnityDao;
 import com.parachute.Tools.DrawViewJsd;
 import com.parachute.administrator.DATAbase.R;
@@ -66,25 +62,20 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 
 public class DataFragment extends Fragment {
-
-
     List<TaskResEnity> mjfhreslist;
     List<TaskResEnity> mtgreslist;
-
     Activity mActivity;
     TaskEntity mTask;
     TaskResEnity mjfhshowres;
     TaskResEnity mtgshowres;
-
     TaskResEnity mjfhoutres;
     TaskResEnity mtgoutres;
     Long moutputjfhresId;
     Long moutputtgresId;
     MyApp myApp;
     Unbinder unbinder;
-    DecimalFormat df4 = new DecimalFormat("####0.00");
-    DecimalFormat df2 = new DecimalFormat("####0.00");
-    DecimalFormat df5 = new DecimalFormat("####0.0000");
+    DecimalFormat df2 = new DecimalFormat("0.00");
+    DecimalFormat df4 = new DecimalFormat("0.0000");
     @BindView(R.id.rb_res_jfh)
     RadioButton rbResJfh;
     @BindView(R.id.rb_res_tg)
@@ -127,6 +118,8 @@ public class DataFragment extends Fragment {
     TextView tvResLength7;
     @BindView(R.id.tv_res_tg_wy7)
     TextView tvResWy7;
+    @BindView(R.id.xjgd)
+    LinearLayout xjgd;
 
     private FileService fileService;
     long SystemTime = 0;
@@ -163,7 +156,6 @@ public class DataFragment extends Fragment {
         moutputjfhresId = new Long(0);
         moutputtgresId = new Long(0);
 
-
     }
 
     @Nullable
@@ -182,12 +174,13 @@ public class DataFragment extends Fragment {
             public void onClick(View v) {
                 IsTg = false;
                 BandSpJfh();
-                if(mjfhreslist.size()>0){
-                if (mjfhreslist.get(0).getId().equals(moutputjfhresId)) {
-                    ckResChoose.setChecked(true);
-                } else {
-                    ckResChoose.setChecked(false);
-                }}
+                if (mjfhreslist.size() > 0) {
+                    if (mjfhreslist.get(0).getId().equals(moutputjfhresId)) {
+                        ckResChoose.setChecked(true);
+                    } else {
+                        ckResChoose.setChecked(false);
+                    }
+                }
                 setView();
             }
         });
@@ -196,12 +189,13 @@ public class DataFragment extends Fragment {
             public void onClick(View v) {
                 IsTg = true;
                 BandSpTg();
-                if(mtgreslist.size()>0){
-                if (mtgreslist.get(0).getId().equals(moutputtgresId)) {
-                    ckResChoose.setChecked(true);
-                } else {
-                    ckResChoose.setChecked(false);
-                }}
+                if (mtgreslist.size() > 0) {
+                    if (mtgreslist.get(0).getId().equals(moutputtgresId)) {
+                        ckResChoose.setChecked(true);
+                    } else {
+                        ckResChoose.setChecked(false);
+                    }
+                }
                 setView();
             }
         });
@@ -237,11 +231,7 @@ public class DataFragment extends Fragment {
 
             e.printStackTrace();
         }
-
-
         GetData();
-
-
         imgResMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -286,9 +276,9 @@ public class DataFragment extends Fragment {
     }
 
     private void setView() {
-
-        if (IsTg && mtgshowres != null)//脱钩
-        {
+        if (IsTg && mtgshowres != null) {//脱钩
+            xjgd.setVisibility(View.VISIBLE);
+            lyResTgsj.setVisibility(View.VISIBLE);
             tvResLength1.setText(df2.format(mtgshowres.getXk1()) + " mm");
             tvResLength2.setText(df2.format(mtgshowres.getXk2()) + " mm");
             tvResLength3.setText(df2.format(mtgshowres.getXdzds1()) + " mm");
@@ -299,8 +289,8 @@ public class DataFragment extends Fragment {
             tvResJsd.setText(df2.format(mtgshowres.getZdjsd()) + " m/s²");
             tvResPjjsd.setText(df2.format(mtgshowres.getPjjsd()) + " m/s²");
             tvResKxcjl.setText(df2.format(mtgshowres.getKxcjl()) + " mm");
-            tvResKxcsj.setText(df5.format(mtgshowres.getKxcsj() ) + " s");
-            tvResZdsj.setText(df5.format(mtgshowres.getZdsj() ) + " s");
+            tvResKxcsj.setText(df4.format(mtgshowres.getKxcsj()) + " s");
+            tvResZdsj.setText(df4.format(mtgshowres.getZdsj()) + " s");
             try {
                 String mCurve = mtgshowres.getCurve();
                 if (mCurve != null) {
@@ -315,8 +305,7 @@ public class DataFragment extends Fragment {
                 Exception a = e;
             }
             Draw();
-        } else if (!IsTg && mjfhshowres != null)//静负荷
-        {
+        } else if (!IsTg && mjfhshowres != null) {//静负荷
             tvResLength1.setText(df2.format(mjfhshowres.getXk1()) + " mm");
             tvResLength2.setText(df2.format(mjfhshowres.getXk2()) + " mm");
             tvResLength3.setText(df2.format(mjfhshowres.getXdzds1()) + " mm");
@@ -324,13 +313,15 @@ public class DataFragment extends Fragment {
             tvResLength5.setText(df2.format(mjfhshowres.getXdhcs1()) + " mm");
             tvResLength6.setText(df2.format(mjfhshowres.getXdhcs2()) + " mm");
 
-            tvResLength7.setText("--" + " mm");
-            tvResJsd.setText("--" + " m/s²");
-            tvResPjjsd.setText("--" + " m/s²");
-            tvResKxcjl.setText("--" + " mm");
-            tvResKxcsj.setText("--" + " ms");
-            tvResZdsj.setText("--" + " ms");
-            flResJsdcurve.removeAllViews();
+            xjgd.setVisibility(View.GONE);
+            lyResTgsj.setVisibility(View.GONE);
+//            tvResLength7.setText("--" + " mm");
+//            tvResJsd.setText("--" + " m/s²");
+//            tvResPjjsd.setText("--" + " m/s²");
+//            tvResKxcjl.setText("--" + " mm");
+//            tvResKxcsj.setText("--" + " ms");
+//            tvResZdsj.setText("--" + " ms");
+//            flResJsdcurve.removeAllViews();
         }
     }
 
@@ -356,19 +347,13 @@ public class DataFragment extends Fragment {
     }
 
     public void InitList(Boolean mIsTg) {
-
-        GetDataList();
-//        mreslist = mdao.queryBuilder().and(TaskResEnityDao.Properties.TaskId.eq(taskId),TaskResEnityDao.Properties.SaveType.eq(0)).list();
-        int count = 1;
-
+        GetDataList();//根据id查询保存的数据列表
         BandSpJfh();
-
     }
 
     private void BandSpJfh() {
         String[] mItems = null;
         if (mjfhreslist != null) {
-
             mItems = new String[mjfhreslist.size()];
             for (int i = 0; i < mjfhreslist.size(); i++) {
                 mItems[i] = (i + 1) + " " + mjfhreslist.get(i).getSaveTime();
@@ -384,8 +369,7 @@ public class DataFragment extends Fragment {
         spResDatalist.setAdapter(adapter);
         spResDatalist.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @SuppressLint("ShowToast")
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int pos, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 jfhSelectIndex = pos;
                 mjfhshowres = mjfhreslist.get(jfhSelectIndex);
                 if (mjfhshowres.getId().equals(moutputjfhresId)) {
@@ -438,7 +422,7 @@ public class DataFragment extends Fragment {
         });
     }
 
-    private void GetDataList() {
+    private void GetDataList() {//根据id查询保存的数据列表
         Long taskId = mTask.getId();
         TaskResEnityDao mdao = MyApp.getDaoInstant().getTaskResEnityDao();
         QueryBuilder qb = mdao.queryBuilder();
@@ -483,7 +467,7 @@ public class DataFragment extends Fragment {
      */
     public void updateExcel() {
         SimpleDateFormat sDateFormat = new SimpleDateFormat("yyMMdd-HHmmss");
-        String date = sDateFormat.format(new java.util.Date());
+        String date = sDateFormat.format(new Date());
         try {
 
             // Workbook workbook = Workbook.getWorkbook(new
@@ -518,32 +502,32 @@ public class DataFragment extends Fragment {
             WritableCell wc = ws5.getWritableCell(r, c); // 列 然后 是 行
 
             Label l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df4.format(mjfhoutres.getXk1())); // 重新设置值
+            l.setString(df2.format(mjfhoutres.getXk1())); // 重新设置值
 
             c++;
             wc = ws5.getWritableCell(r, c); // 列 然后 是 行
             l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df4.format(mjfhoutres.getXk2())); // 重新设置值
+            l.setString(df2.format(mjfhoutres.getXk2())); // 重新设置值
 
             c++;
             wc = ws5.getWritableCell(r, c); // 列 然后 是 行
             l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df4.format(mjfhoutres.getXdzds1())); // 重新设置值
+            l.setString(df2.format(mjfhoutres.getXdzds1())); // 重新设置值
 
             c++;
             wc = ws5.getWritableCell(r, c); // 列 然后 是 行
             l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df4.format(mjfhoutres.getXdzds2())); // 重新设置值
+            l.setString(df2.format(mjfhoutres.getXdzds2())); // 重新设置值
 
             c++;
             wc = ws5.getWritableCell(r, c); // 列 然后 是 行
             l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df4.format(mjfhoutres.getXdhcs1())); // 重新设置值
+            l.setString(df2.format(mjfhoutres.getXdhcs1())); // 重新设置值
 
             c++;
             wc = ws5.getWritableCell(r, c); // 列 然后 是 行
             l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df4.format(mjfhoutres.getXdhcs2())); // 重新设置值
+            l.setString(df2.format(mjfhoutres.getXdhcs2())); // 重新设置值
 
             WritableSheet ws6 = writableWorkbook.getSheet(6);
             // mtgxk1 = mRes.getSbxl();
@@ -563,62 +547,62 @@ public class DataFragment extends Fragment {
             c = 3;
             wc = ws6.getWritableCell(r, c); // 列 然后 是 行
             l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df4.format(mtgoutres.getXk1())); // 重新设置值
+            l.setString(df2.format(mtgoutres.getXk1())); // 重新设置值
 
             c++;
             wc = ws6.getWritableCell(r, c); // 列 然后 是 行
             l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df4.format(mtgoutres.getXk2())); // 重新设置值
+            l.setString(df2.format(mtgoutres.getXk2())); // 重新设置值
 
             c++;
             wc = ws6.getWritableCell(r, c); // 列 然后 是 行
             l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df4.format(mtgoutres.getXdzds1())); // 重新设置值
+            l.setString(df2.format(mtgoutres.getXdzds1())); // 重新设置值
 
             c++;
             wc = ws6.getWritableCell(r, c); // 列 然后 是 行
             l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df4.format(mtgoutres.getXdzds2())); // 重新设置值
+            l.setString(df2.format(mtgoutres.getXdzds2())); // 重新设置值
 
             c++;
             wc = ws6.getWritableCell(r, c); // 列 然后 是 行
             l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df4.format(mtgoutres.getXdhcs1())); // 重新设置值
+            l.setString(df2.format(mtgoutres.getXdhcs1())); // 重新设置值
 
             c++;
             wc = ws6.getWritableCell(r, c); // 列 然后 是 行
             l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df4.format(mtgoutres.getXdhcs2())); // 重新设置值
+            l.setString(df2.format(mtgoutres.getXdhcs2())); // 重新设置值
 
             c++;
             wc = ws6.getWritableCell(r, c); // 列 然后 是 行
             l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df5.format(mtgoutres.getKxcsj() )); // 重新设置值
+            l.setString(df4.format(mtgoutres.getKxcsj())); // 重新设置值
 
             c++;
             wc = ws6.getWritableCell(r, c); // 列 然后 是 行
             l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df4.format(mtgoutres.getKxcjl())); // 重新设置值
+            l.setString(df2.format(mtgoutres.getKxcjl())); // 重新设置值
 
             c++;
             wc = ws6.getWritableCell(r, c); // 列 然后 是 行
             l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df4.format(mtgoutres.getZdjsd())); // 重新设置值
+            l.setString(df2.format(mtgoutres.getZdjsd())); // 重新设置值
 
             c++;
             wc = ws6.getWritableCell(r, c); // 列 然后 是 行
             l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df4.format(mtgoutres.getPjjsd())); // 重新设置值
+            l.setString(df2.format(mtgoutres.getPjjsd())); // 重新设置值
 
             c++;
             wc = ws6.getWritableCell(r, c); // 列 然后 是 行
             l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df5.format(mtgoutres.getZdsj() / 4 )); // 重新设置值
+            l.setString(df4.format(mtgoutres.getZdsj() / 4)); // 重新设置值
 
             c++;
             wc = ws6.getWritableCell(r, c); // 列 然后 是 行
             l = (Label) wc; // (强转)得到单元格的Label()对象
-            l.setString(df4.format(mtgoutres.getXjgd())); // 重新设置值
+            l.setString(df2.format(mtgoutres.getXjgd())); // 重新设置值
             c++;
             // 添加图片
 

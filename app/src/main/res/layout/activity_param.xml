@@ -25,8 +25,7 @@
 
             app:contentScrim="@color/tittleBar"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:titleEnabled="false"
-     >
+            app:titleEnabled="false">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -67,28 +66,27 @@
             android:id="@+id/et_task_name"
             style="@style/Edittext_TaskInf"
             android:layout_marginTop="@dimen/spacing_normal"
-            android:maxLength="50"
-            android:hint="@string/taskUnitName" />
+            android:hint="@string/taskUnitName"
+            android:maxLength="50" />
 
         <EditText
             android:id="@+id/et_number"
             style="@style/Edittext_TaskInf"
             android:layout_marginTop="15dp"
-            android:maxLength="20"
-            android:hint="@string/gasPumpNumber" />
+            android:hint="@string/gasPumpNumber"
+            android:maxLength="20" />
 
         <EditText
             android:id="@+id/et_people_name"
             style="@style/Edittext_TaskInf"
             android:layout_marginTop="15dp"
-            android:maxLength="50"
-            android:hint="@string/testPeople" />
+            android:hint="@string/testPeople"
+            android:maxLength="50" />
     </LinearLayout>
 
 
-
-
     <include layout="@layout/content_create_task" />
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"

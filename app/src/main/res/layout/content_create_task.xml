@@ -8,12 +8,11 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <LinearLayout
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="clip_horizontal"
-        android:visibility="gone"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -365,7 +364,6 @@
             </LinearLayout>
         </LinearLayout>
 
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -555,7 +553,6 @@
             </LinearLayout>
 
         </LinearLayout>
-
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -747,7 +744,6 @@
 
         </LinearLayout>
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -783,8 +779,8 @@
             android:id="@+id/ly_param_set"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -1129,7 +1125,7 @@
                     <EditText
                         android:id="@+id/et_param_set_edzs"
                         style="@style/EdittextInput"
-                        android:text="1000"/>
+                        android:text="1000" />
 
                     <TextView
 
@@ -1158,7 +1154,7 @@
                     <EditText
                         android:id="@+id/et_param_set_sczs"
                         style="@style/EdittextInput"
-                        android:text="1000"/>
+                        android:text="1000" />
 
                     <TextView
 
@@ -1179,4 +1175,5 @@
                 android:orientation="horizontal"></LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
 </android.support.v4.widget.NestedScrollView>

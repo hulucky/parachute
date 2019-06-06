@@ -6,7 +6,6 @@
 
     <ScrollView
         android:layout_width="match_parent"
-
         android:layout_height="match_parent"
         android:layout_marginBottom="2dp"
         android:layout_marginLeft="2dp"
@@ -24,7 +23,6 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center_horizontal|center_vertical"
                 android:background="@color/grayrport">
-
 
                 <RadioGroup
                     android:layout_width="350dp"
@@ -81,17 +79,15 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="30dp"
                     android:layout_weight="2.5"
-                    android:background="@color/spinner"></android.support.v7.widget.AppCompatSpinner>
+                    android:background="@color/spinner" />
 
                 <CheckBox
                     android:id="@+id/ck_res_choose"
                     android:layout_width="40dp"
                     android:layout_height="wrap_content"
-
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="30dp"
                     android:layout_weight="1"
-
                     android:text="导入报告" />
 
             </LinearLayout>
@@ -103,7 +99,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -111,13 +108,11 @@
                     android:gravity="center_horizontal"
                     android:orientation="vertical">
 
-
                     <FrameLayout
                         android:id="@+id/fl_res_jsdcurve"
                         android:layout_width="480dp"
                         android:layout_height="250dp"
-                        android:background="@color/lightblue"></FrameLayout>
-
+                        android:background="@color/lightblue" />
 
                 </LinearLayout>
 
@@ -204,6 +199,7 @@
                 </LinearLayout>
 
                 <TextView style="@style/splite_line" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -245,7 +241,7 @@
 
                     <TextView
                         style="@style/style_res_name"
-                        android:text="相对缓冲绳1:" />
+                        android:text="相对制动绳1:" />
 
                     <TextView
                         android:id="@+id/tv_res_tg_length3"
@@ -255,7 +251,7 @@
 
                     <TextView
                         style="@style/style_res_name"
-                        android:text="相对缓冲绳2:" />
+                        android:text="相对制动绳2:" />
 
                     <TextView
                         android:id="@+id/tv_res_tg_length4"
@@ -268,7 +264,7 @@
 
                     <TextView
                         style="@style/style_res_name"
-                        android:text="相对制动绳1:" />
+                        android:text="相对缓冲绳1:" />
 
                     <TextView
                         android:id="@+id/tv_res_tg_length5"
@@ -278,7 +274,7 @@
 
                     <TextView
                         style="@style/style_res_name"
-                        android:text="相对制动绳2:" />
+                        android:text="相对缓冲绳2:" />
 
                     <TextView
                         android:id="@+id/tv_res_tg_length6"
@@ -288,7 +284,10 @@
 
                 <TextView style="@style/splite_line" />
 
-                <LinearLayout style="@style/ly_res_row">
+                <LinearLayout
+                    android:id="@+id/xjgd"
+                    style="@style/ly_res_row"
+                    android:visibility="gone">
 
                     <TextView
                         style="@style/style_res_name"
@@ -308,7 +307,9 @@
                         android:id="@+id/tv_res_tg_wy7"
                         style="@style/style_res_length" />
                 </LinearLayout>
+
             </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

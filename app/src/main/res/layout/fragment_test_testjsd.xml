@@ -2,50 +2,41 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:orientation="vertical">
-
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#c1d8fd"
         android:gravity="center_horizontal"
-
         android:orientation="vertical"
-        android:paddingBottom="@dimen/x5"
-        android:paddingLeft="@dimen/x5"
-        android:paddingRight="@dimen/x5"
-        android:paddingTop="@dimen/x5">
+        android:padding="5dp">
 
         <LinearLayout
-            android:layout_width="550dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:gravity="center_vertical">
-
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="200dp"
                     android:layout_height="30dp"
-
-                    android:layout_marginLeft="100dp"
-
+                    android:layout_marginLeft="10dp"
                     android:text="加速度传感器状态:"
-
                     android:textSize="18sp" />
 
-                <TextView
+                <ImageView
                     android:id="@+id/imgjsd"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@drawable/deng_black" />
+                    android:src="@mipmap/deng_black"
+                    android:scaleType="centerCrop" />
 
                 <TextView
                     android:id="@+id/tvjsdstate"
@@ -56,28 +47,20 @@
                 <Switch
                     android:id="@+id/switchJsd"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/x40"
-
+                    android:layout_height="40dp"
                     android:layout_marginLeft="20dp"
                     android:showText="true"
                     android:text=" 方向:"
                     android:textOff="下"
                     android:textOn="上"
                     android:textSize="16sp" />
-
-                <Button
-                    android:id="@+id/btnReSendJsd"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-
-                    android:visibility="gone" />
             </LinearLayout>
 
             <FrameLayout
                 android:id="@+id/fltgjsdcurve"
-                android:layout_width="480dp"
+                android:layout_width="match_parent"
                 android:layout_height="250dp"
-                android:background="@color/lightblue"></FrameLayout>
+                android:background="@color/lightblue" />
 
             <ProgressBar
                 android:id="@+id/progressBar1"
@@ -88,28 +71,32 @@
 
         </LinearLayout>
 
-        <TableLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <TableRow
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
                 android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
                     android:layout_marginLeft="2dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
                     android:text="   加  速  度 ：" />
 
                 <TextView
                     android:id="@+id/edtgjsd"
-                    style="@style/jsd_edit" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/lib_black_reduce" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -119,115 +106,129 @@
                 <View style="@style/split_vetical" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
                     android:layout_marginLeft="5dp"
-                    android:text="平均加速度 ：" />
+                    android:layout_weight="1"
+                    android:text="平均加速度:" />
 
                 <TextView
                     android:id="@+id/edtgpjjsd"
-                    style="@style/jsd_edit" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="m/s² " />
+                    android:text="m/s²" />
 
-
-            </TableRow>
+            </LinearLayout>
 
             <TextView style="@style/splite_line" />
 
-            <TableRow
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:text=" 空行程时间：" />
+                    android:layout_marginLeft="2dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:text="空行程时间：" />
 
                 <TextView
                     android:id="@+id/edtgkxcsj"
-                    style="@style/jsd_edit" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/lib_black_reduce" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" s        " />
+                    android:text=" s       " />
 
                 <View style="@style/split_vetical" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
                     android:layout_marginLeft="5dp"
-                    android:text="空行程距离：" />
+                    android:layout_weight="1"
+                    android:text="空行程距离:" />
 
                 <TextView
                     android:id="@+id/edtgkxcjl"
-                    style="@style/jsd_edit" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="mm   " />
-            </TableRow>
+                    android:text="mm  " />
+
+            </LinearLayout>
 
             <TextView style="@style/splite_line" />
 
-            <TableRow
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginLeft="2dp"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
                     android:text="制动时间：" />
 
                 <TextView
-                    android:id="@+id/edtgzdjl"
-                    style="@style/jsd_edit" />
+                    android:id="@+id/edtgzdsj"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="@color/lib_black_reduce" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" s  " />
+                    android:text="s       " />
 
                 <View style="@style/split_vetical" />
 
                 <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:text="" />
+
+                <TextView
+                    android:id="@+id/jsd_edit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp" />
+                    android:text="       " />
 
-                <TextView
-                    style="@style/jsd_edit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </TableRow>
-        </TableLayout>
+        </LinearLayout>
+
     </LinearLayout>
 
 

@@ -1,5 +1,6 @@
 package com.parachute.main;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,10 +18,12 @@ import com.greendao.manager.DataFZQ;
 import com.jaeger.library.StatusBarUtil;
 import com.parachute.Tools.MyFunction;
 import com.parachute.administrator.DATAbase.R;
-import com.parachute.serialport.ComAssistant.SerialHelper;
-import com.parachute.serialport.bean.ComBean;
 import com.sensor.SensorData;
 import com.sensor.view.SensorView;
+import com.xzkydz.bean.ComBean;
+import com.xzkydz.helper.ComControl;
+import com.xzkydz.helper.SerialHelper;
+import com.xzkydz.util.DataType;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -119,7 +122,7 @@ public class SensorActivity extends AppCompatActivity {
 
     SerialControl ComA;
     DispQueueThread DispQueue;
-    private boolean showdata=false;
+    private boolean showdata = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -162,9 +165,10 @@ public class SensorActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        ComA = new SerialControl();
-        setControls();
+        ComA = new SerialControl(this, DataType.DATA_OK_PARSE);
+        ComA.setiDelay(50);
         DispQueueStart();
+        ComControl.OpenComPort(ComA);
         if (IsStart == false) {
             handler.postDelayed(runnable, 1000);
             IsStart = true;
@@ -184,28 +188,28 @@ public class SensorActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        ComControl.CloseComPort(ComA);
+        ComA.close();
         handler.removeCallbacksAndMessages(null);
     }
 
     @OnClick(R.id.btn_show)
     public void onViewClicked() {
-        if(showdata)//当前状态为显示
+        if (showdata)//当前状态为显示
         {
             showdata = false;
-                btnShow.setBackgroundResource(R.drawable.cgq_float_xs);
-                ll1.setVisibility(View.GONE);
-                ll2.setVisibility(View.GONE);
-                ll3.setVisibility(View.GONE);
-                ll4.setVisibility(View.GONE);
-            } else {
-        showdata = true;
+            btnShow.setBackgroundResource(R.drawable.cgq_float_xs);
+            ll1.setVisibility(View.GONE);
+            ll2.setVisibility(View.GONE);
+            ll3.setVisibility(View.GONE);
+            ll4.setVisibility(View.GONE);
+        } else {
+            showdata = true;
             btnShow.setBackgroundResource(R.drawable.cgq_float_yc);
-                ll1.setVisibility(View.VISIBLE);
-                ll2.setVisibility(View.VISIBLE);
-                ll3.setVisibility(View.VISIBLE);
-                ll4.setVisibility(View.VISIBLE);
-            }
+            ll1.setVisibility(View.VISIBLE);
+            ll2.setVisibility(View.VISIBLE);
+            ll3.setVisibility(View.VISIBLE);
+            ll4.setVisibility(View.VISIBLE);
+        }
     }
 
     //----------------------------------------------------刷新显示线程
@@ -226,8 +230,6 @@ public class SensorActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             public void run() {
                                 DispRecData(ComData);
-
-
                             }
                         });
                         try {
@@ -259,27 +261,27 @@ public class SensorActivity extends AppCompatActivity {
 
         int msingal, mpower;
         // 获取加速度数据
-        if (ComRecData.bRec.length > 9) {
+        if (ComRecData.recData.length > 9) {
         }
         // 如果没有进行传感器设置，会进行传感器检测 （完善重新发送配置指令 ）
 
-        if (ComRecData.bRec.length > 9) {
-            Leixing = Math.abs((int) ComRecData.bRec[9]);
+        if (ComRecData.recData.length > 9) {
+            Leixing = Math.abs((int) ComRecData.recData[9]);
         }
         switch (Leixing) {
 
             case 95:// 激光测距
                 int ki = 12;
-                int Lcount = ComRecData.bRec[10];// 传感器编号
+                int Lcount = ComRecData.recData[10];// 传感器编号
                 byte[] LbufferLA = new byte[8];
-                LbufferLA[0] = ComRecData.bRec[ki + 2];
-                LbufferLA[1] = ComRecData.bRec[ki + 3];
-                LbufferLA[2] = ComRecData.bRec[ki + 4];
-                LbufferLA[3] = ComRecData.bRec[ki + 5];
-                LbufferLA[4] = ComRecData.bRec[ki + 6];
-                LbufferLA[5] = ComRecData.bRec[ki + 7];
-                LbufferLA[6] = ComRecData.bRec[ki + 8];
-                LbufferLA[7] = ComRecData.bRec[ki + 9];
+                LbufferLA[0] = ComRecData.recData[ki + 2];
+                LbufferLA[1] = ComRecData.recData[ki + 3];
+                LbufferLA[2] = ComRecData.recData[ki + 4];
+                LbufferLA[3] = ComRecData.recData[ki + 5];
+                LbufferLA[4] = ComRecData.recData[ki + 6];
+                LbufferLA[5] = ComRecData.recData[ki + 7];
+                LbufferLA[6] = ComRecData.recData[ki + 8];
+                LbufferLA[7] = ComRecData.recData[ki + 9];
                 // 距离
                 String Length = (new String(LbufferLA, 1, 7,
                         Charset.forName("ASCII")));
@@ -288,8 +290,8 @@ public class SensorActivity extends AppCompatActivity {
                     LengthList[Lcount] = Float.parseFloat(Length) * 1000 + Float.parseFloat(Length.substring(4, 5)) / 10 + (float) (Math.random() - 0.5) / 10;
 
 
-                    msingal = ComRecData.bRec[23] < 0 ? 256 + ComRecData.bRec[23] : ComRecData.bRec[23];
-                    mpower = MyFunction.twoBytesToInt(ComRecData.bRec, 21);
+                    msingal = ComRecData.recData[23] < 0 ? 256 + ComRecData.recData[23] : ComRecData.recData[23];
+                    mpower = MyFunction.twoBytesToInt(ComRecData.recData, 21);
                     mdata.setSensor(Lcount, mpower, msingal, 1);
                     SetFiveOne(Lcount);
 
@@ -298,12 +300,12 @@ public class SensorActivity extends AppCompatActivity {
                 }
                 break;
             case 92: // 加速度
-                if (ComRecData.bRec[13] == 7) {//心跳包
+                if (ComRecData.recData[13] == 7) {//心跳包
 //                        TVEdtxTgJsd.setBackground(drawable);
 //                        TVSearchJsd.setText("加速度传感器已连接");
 
-                    msingal = ComRecData.bRec[17] < 0 ? 256 + ComRecData.bRec[17] : ComRecData.bRec[17];
-                    mpower = MyFunction.twoBytesToInt(ComRecData.bRec, 15);
+                    msingal = ComRecData.recData[17] < 0 ? 256 + ComRecData.recData[17] : ComRecData.recData[17];
+                    mpower = MyFunction.twoBytesToInt(ComRecData.recData, 15);
                     mdata.setSensor(0, mpower, msingal, 1);
                     // SetJsdWait();
                 }
@@ -379,8 +381,6 @@ public class SensorActivity extends AppCompatActivity {
     };
 
     private void refresh() {
-
-
         tvTestTgLength1.setText(showLength[1]);
         tvTestTgLength2.setText(showLength[2]);
         tvTestTgLength3.setText(showLength[3]);
@@ -428,54 +428,28 @@ public class SensorActivity extends AppCompatActivity {
         }
     }
 
-    //    ==============================串口控制相关方法================================================//
-    // ----------------------------------------------------设置串口
-    private void setControls() {
-
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-            ComA.setPort("/dev/ttyMT2");
-        } else {
-            ComA.setPort("/dev/ttyMT1");
-        }
-
-        ComA.setBaudRate("115200");
-        OpenComPort(ComA);
-    }
-
     //----------------------------------------------------串口控制类
     private class SerialControl extends SerialHelper {
-
-        public SerialControl() {
+        public SerialControl(Context context, int mDataType) {
+            super(context, mDataType);
         }
 
-        protected void onDataReceived(ComBean ComRecData) {
-            // TODO Auto-generated method stub
-            DispQueue.AddQueue(ComRecData); //线程定时刷新显示(推荐)
+        public SerialControl(Context context, String sPort, String sBaudRate, int mDataType) {
+            super(context, sPort, sBaudRate, mDataType);
         }
+
+        @Override
+        protected void onDataReceived(ComBean comBean) {
+            DispQueue.AddQueue(comBean); //线程定时刷新显示(推荐)
+        }
+
     }
 
     public void DispQueueStart() {
-        //串口控制
-        ComA = new SerialControl();
         DispQueue = new DispQueueThread();
-        setControls();
         DispQueue.start();
     }
 
-    /**
-     * function ：打开串口
-     */
-    public void OpenComPort(SerialHelper ComPort) {
-        try {
-            ComPort.open();
-        } catch (SecurityException e) {
-            Toasty.info(this, "打开串口失败:没有串口读/写权限!");
-        } catch (IOException e) {
-            Toasty.info(this, "打开串口失败:未知错误!");
-        } catch (InvalidParameterException e) {
-            Toasty.info(this, "打开串口失败:参数错误!");
-        }
-    }
 
     public void SetSensor(String str, float mpower, float msignal, int minf) {
         try {
@@ -511,4 +485,3 @@ public class SensorActivity extends AppCompatActivity {
         }
     }
 }
-

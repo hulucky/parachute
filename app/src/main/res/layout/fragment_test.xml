@@ -4,53 +4,37 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--<com.ventilator.view.GifView-->
-        <!--android:id="@+id/giv_gif"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="260dp"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:adjustViewBounds="true"-->
-        <!--android:scaleType="fitXY" />-->
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/giv_gif"
         android:layout_width="wrap_content"
         android:layout_height="260dp"
-   android:scaleType="fitXY" />
-
-
-
-
-
+        android:scaleType="fitXY" />
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="60dp"
         android:layout_weight="1"
         android:background="#082045"
         android:orientation="horizontal"
-        android:layout_marginBottom="60dp"
         android:paddingBottom="@dimen/spacing_normal"
         android:paddingLeft="@dimen/spacing_normal"
         android:paddingRight="0dp"
         android:paddingTop="@dimen/spacing_normal">
 
 
-        <com.parachute.view.MyNoScrollViewPager
+        <com.xzkydz.function.view.CustomViewPager
             android:id="@+id/fr_main"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/shape_show_test_data"
-            android:overScrollMode="never"
-            android:scrollbars="none">
-        </com.parachute.view.MyNoScrollViewPager>
-
+            android:background="@drawable/shape_show_test_data" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
-       
+
             <RadioGroup
                 android:id="@+id/ll"
                 android:layout_width="wrap_content"
@@ -60,58 +44,59 @@
 
                 <RadioButton
                     android:id="@+id/rbn_test_cgq"
-                    android:checked="true"
                     style="@style/RadioButtonTest"
+                    android:checked="true"
                     android:text="传感器" />
 
                 <RadioButton
                     android:id="@+id/rbn_test_jfh"
                     style="@style/RadioButtonTest"
                     android:text="静负荷" />
+
                 <RadioButton
                     android:id="@+id/rbn_test_tg"
                     style="@style/RadioButtonTest"
                     android:text="脱钩" />
+
                 <RadioButton
                     android:id="@+id/rbn_test_jsd"
                     style="@style/RadioButtonTest"
-
-                    android:visibility="gone"
+                    android:text="加速度"
                     android:textColor="@color/color_yellow"
-                    android:text="加速度" />
+                    android:visibility="invisible" />
 
                 <RadioButton
                     android:id="@+id/rbn_test_wy"
                     style="@style/RadioButtonTest"
-
-                    android:visibility="gone"
+                    android:text="位移"
                     android:textColor="@color/color_yellow"
-                    android:text="位移" />
-
-
-
+                    android:visibility="invisible" />
             </RadioGroup>
 
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/spacing_normal"
                 android:layout_alignParentBottom="true"
+                android:layout_marginLeft="@dimen/spacing_normal"
                 android:orientation="vertical">
 
-
-                <CheckBox
-                    android:id="@+id/cb_test_start"
+                <Button
+                    android:id="@+id/btn_test_start"
+                    android:layout_width="70dp"
+                    android:layout_height="50dp"
                     android:layout_marginTop="@dimen/spacing_tiny"
-                    style="@style/CheckBoxTest"
-                    android:text="开始" />
+                    android:background="@mipmap/rightbar_btn_blue"
+                    android:gravity="center"
+                    android:text="开始"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
 
                 <Button
                     android:id="@+id/btn_test_save"
                     style="@style/CheckBoxTest"
-                    android:background="@drawable/selector_bg_test_button"
                     android:layout_marginTop="@dimen/spacing_tiny"
+                    android:background="@drawable/selector_bg_test_button"
                     android:text="保存" />
             </LinearLayout>
         </RelativeLayout>

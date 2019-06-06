@@ -3,15 +3,17 @@ package com.parachute.test;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.Time;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,7 +24,19 @@ import com.greendao.dbUtils.GreateTaskUtils;
 import com.greendao.manager.DataFZQ;
 import com.jaeger.library.StatusBarUtil;
 import com.ldoublem.loadingviewlib.view.LVPlayBall;
+import com.parachute.bean.ISensorInf;
+import com.parachute.bean.JsdBean1;
+import com.parachute.bean.JsdBean7;
+import com.parachute.bean.WyBean1;
+import com.parachute.bean.WyBean2;
+import com.parachute.bean.WyBean3;
+import com.parachute.bean.WyBean4;
+import com.parachute.bean.WyBean5;
+import com.parachute.bean.WyBean6;
+import com.parachute.bean.WyBean7;
+import com.parachute.utils.SerialControl;
 import com.sensor.SensorData;
+import com.sensor.SensorInf;
 import com.sensor.view.SensorView;
 import com.parachute.Adapter.TestPagerAdapter;
 
@@ -33,25 +47,35 @@ import com.parachute.administrator.DATAbase.greendao.TaskEntity;
 import com.parachute.administrator.DATAbase.greendao.TaskResEnity;
 import com.parachute.app.MyApp;
 
-import com.parachute.serialport.ComAssistant.SerialHelper;
-import com.parachute.serialport.bean.ComBean;
 import com.parachute.test.fragment.DataFragment;
 import com.parachute.test.fragment.ParameterFragment;
 import com.parachute.test.fragment.TestFragment;
-
+import com.xzkydz.bean.ComBean;
+import com.xzkydz.helper.ComControl;
+import com.xzkydz.helper.SerialHelper;
+import com.xzkydz.util.DataType;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.security.InvalidParameterException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Queue;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.dmoral.toasty.Toasty;
+
+import static com.parachute.app.MyApp.jsdBean1;
+import static com.parachute.app.MyApp.jsdBean7;
+import static com.parachute.app.MyApp.wyBean1;
+import static com.parachute.app.MyApp.wyBean2;
+import static com.parachute.app.MyApp.wyBean3;
+import static com.parachute.app.MyApp.wyBean4;
+import static com.parachute.app.MyApp.wyBean5;
+import static com.parachute.app.MyApp.wyBean6;
+import static com.parachute.app.MyApp.wyBean7;
 
 public class TestActivity extends AppCompatActivity {
 
@@ -63,22 +87,16 @@ public class TestActivity extends AppCompatActivity {
     com.flyco.tablayout.SlidingTabLayout tl;
     @BindView(R.id.loadding)
     LVPlayBall loadding;
+
     public MyApp myApp;
-    public DataFZQ mdata;
-
-
-    SerialControl ComA;
-    DispQueueThread DispQueue;
+    public TestActivity instance;
+    private SerialControl ComA;
     ParameterFragment parameterFragment;
     DataFragment dataFragment;
     TestFragment testFragment;
-    DecimalFormat df4 = new DecimalFormat("####00.00");
-    DecimalFormat df2 = new DecimalFormat("####0.00");
-
-    DecimalFormat df3 = new DecimalFormat("####0.000");
-
-    DecimalFormat df1 = new DecimalFormat("####0.0");
-
+    DecimalFormat df1 = new DecimalFormat("0.0");
+    DecimalFormat df2 = new DecimalFormat("0.00");
+    DecimalFormat df3 = new DecimalFormat("0.000");
 
     private float mJsd;
     private float mPjJsd;
@@ -96,46 +114,44 @@ public class TestActivity extends AppCompatActivity {
     float JsdRange = 1f;
     int AvePreCount = 50;
 
-
     Boolean isDown = true;
-    public static int TxDelay = 10;
-
+    public int TxDelay = 10;
 
     float SUMJSD = 0;
-    private boolean IsReady;
-    private boolean IsWait;
-    Boolean IsBuzy = false;
+    public boolean IsReady;
+    public boolean IsWait;
+    public boolean IsBusy;
+
     float[] LengthList = new float[8];// 当前距离
     float[] PreList = new float[8];// 之前距离，参照用
     float[] ChangeList = new float[8];// 位移距离，保存用
     String[] showLength;//当前距离，送显
     String[] showWy;//位移差，送显
 
-    private int indexXk1;
-    private int indexXk2;
-    private int indexXdzds1;
-    private int indexXdzds2;
-    private int indexXdhcs1;
-    private int indexXdhcs2;
-    private int indexXjgd;
-    private int indexWd;
-    private int indexJsd;
+    float[] LengthListTg = new float[8];// 当前距离
+    float[] PreListTg = new float[8];// 之前距离，参照用
+    float[] ChangeListTg = new float[8];// 位移距离，保存用
+    String[] showLengthTg;//当前距离，送显
+    String[] showWyTg;//位移差，送显
+
+    private int indexXk1;//楔块1
+    private int indexXk2;//楔块2
+    private int indexXdzds1;//相对制动绳1
+    private int indexXdzds2;//相对制动绳2
+    private int indexXdhcs1;//相对缓冲绳1
+    private int indexXdhcs2;//相对缓冲绳2
+    private int indexXjgd;//下降高度
+    private int indexWd;//
+    private int indexJsd;//加速度
     private long pretime = 0;
     private TaskEntity mtask;
+    public DataFZQ mdata;
 
-    public static volatile long[] IsTx = new long[8]; // 测试线程修改参数
-    public static volatile long CaijiTime = 0;
+    public volatile long[] IsTx = new long[8]; // 测试线程修改参数
+    public volatile long CaijiTime = 0;
     private int Leixing;
 
-    List<byte[]> mJsdBuffer = new ArrayList<byte[]>();
-
-    public int getJsdCount() {
-        return JsdCount;
-    }
-
-    public void setJsdCount(int jsdCount) {
-        JsdCount = jsdCount;
-    }
+    public List<byte[]> mJsdBuffer = new ArrayList<>();
 
     int JsdCount = 0;
     public float[] mJsdList = new float[1500];// 加速度曲线数据
@@ -149,179 +165,9 @@ public class TestActivity extends AppCompatActivity {
     // 1 work 开始以后，停止之前
     // 2 done 停止以后，保存以前
     private Integer IsStart;
-
-    public boolean isInit() {
-        return IsInit;
-    }
-
-    public void setInit(boolean init) {
-        IsInit = init;
-    }
-
     private boolean IsInit;
     private Handler handler;
-
-    public Boolean getTg() {
-        return IsTg;
-    }
-
-    public void setTg(Boolean tg) {
-        IsTg = tg;
-    }
-
     private Boolean IsTg = false;//是否在测试脱钩
-
-
-    public Boolean getBuzy() {
-        return IsBuzy;
-    }
-
-    public void setBuzy(Boolean buzy) {
-        IsBuzy = buzy;
-    }
-
-
-    public float[] getLengthList() {
-        return LengthList;
-    }
-
-    public void setLengthList(float[] lengthList) {
-        LengthList = lengthList;
-    }
-
-    public float[] getChangeList() {
-        return ChangeList;
-    }
-
-    public void setChangeList(float[] changeList) {
-        ChangeList = changeList;
-    }
-
-
-    public String[] getShowLength() {
-        return showLength;
-    }
-
-    public void setShowLength(String[] showLength) {
-        this.showLength = showLength;
-    }
-
-    public String[] getShowWy() {
-        return showWy;
-    }
-
-    public void setShowWy(String[] showWy) {
-        this.showWy = showWy;
-    }
-
-
-    public int getIndexXk1() {
-        return indexXk1;
-    }
-
-
-    public int getIndexXk2() {
-        return indexXk2;
-    }
-
-
-    public int getIndexXdzds1() {
-        return indexXdzds1;
-    }
-
-
-    public int getIndexXdzds2() {
-        return indexXdzds2;
-    }
-
-
-    public int getIndexXdhcs1() {
-        return indexXdhcs1;
-    }
-
-
-    public int getIndexXdhcs2() {
-        return indexXdhcs2;
-    }
-
-
-    public int getIndexXjgd() {
-        return indexXjgd;
-    }
-
-
-    public boolean isStart() {
-
-        if (IsStart == 1) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isDown() {
-
-        if (IsStart == 2) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isWait() {
-
-        if (IsStart == 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public void setStart(Integer start) {
-        IsStart = start;
-    }
-
-
-    public synchronized void SetFiveOne(int index) {
-        IsTx[index] = System.currentTimeMillis();
-    }
-
-    public synchronized void SetCaiji() {
-        CaijiTime = System.currentTimeMillis();
-    }
-
-    private long TimeBetween(Long mTime) {
-        return System.currentTimeMillis() - mTime;
-    }
-
-
-    @Override
-    public void onBackPressed() {
-
-        Dialog dialog = new AlertDialog.Builder(TestActivity.this).setTitle("选择此任务状态")
-                .setIcon(R.drawable.complete)
-                .setMessage("测试任务是否完成？")
-                .setPositiveButton("已完成", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mtask.set_IsCompleteTask(true);
-
-                        GreateTaskUtils.update(mtask);
-                        dialog.dismiss();
-                        finish();
-//                        onDestroy();
-
-
-                    }
-                }).setNegativeButton("未完成", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        finish();
-//                        onDestroy();
-                    }
-                }).show();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -331,13 +177,16 @@ public class TestActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         StatusBarUtil.setColor(this, getResources().getColor(R.color.tittleBar), 0);
         setBackArrowStyle();
+        instance = this;
         myApp = MyApp.getInstance();
         handler = new Handler();
-        showLength = new String[8];
-        showWy = new String[8];
-        initSenserIndex();
-        showLoading();
-        getData();
+        showLength = new String[8];//当前距离，送显
+        showWy = new String[8];//位移差，送显
+        showLengthTg = new String[8];
+        showWyTg = new String[8];
+        initSenserIndex();//初始化传感器位置
+        showLoading();//颜色动画设置
+        getData();//设置历史任务
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -350,7 +199,10 @@ public class TestActivity extends AppCompatActivity {
                 });
             }
         }).start();
-        IsStart=0;
+        //0 wait 保存以后
+        // 1 work 开始以后
+        // 2 done 停止以后
+        IsStart = 2;//默认是停止状态
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -359,91 +211,100 @@ public class TestActivity extends AppCompatActivity {
             }
         });
         mtask = MyApp.getTaskEnity();
-        ComA = new SerialControl();
-        setControls();
-        DispQueueStart();
-        ComA.setiDelay(10);  // 设置读取串口的时间间隔
+        ComA = new SerialControl(instance, DataType.DATA_OK_PARSE);
+        ComA.setiDelay(20);  // 设置读取串口的时间间隔
+        ComControl.OpenComPort(ComA);
+        onReceivedSensorData();//给各传感器设置电量信号
 
-        if (IsInit == false) {
-
+        if (!IsInit) {
             handler.postDelayed(runnable, 1000);
             IsInit = true;
         }
     }
 
-    private void initSenserIndex() {
-        // TODO Auto-generated method stub
 
-        indexXk1 = 1;
-        indexXk2 = 2;
-        indexXdzds1 = 5;
-        indexXdzds2 = 6;
-        indexXdhcs1 = 3;
-        indexXdhcs2 = 4;
-        indexXjgd = 7;
+    private void initSenserIndex() {//初始化传感器位置
+        indexXk1 = 1;//楔块1
+        indexXk2 = 2;//楔块2
+        indexXdzds1 = 3;//相对制动绳1
+        indexXdzds2 = 4;//相对制动绳2
+        indexXdhcs1 = 5;//相对缓冲绳1
+        indexXdhcs2 = 6;//相对缓冲绳2
+        indexXjgd = 7;//下降高度
         indexWd = 0;
-        indexJsd = 0;
-
+        indexJsd = 0;//加速度
     }
 
-    //    ==============================串口控制相关方法================================================//
-    // ----------------------------------------------------设置串口
-    private void setControls() {
-
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
-            ComA.setPort("/dev/ttyMT2");
+    //0 wait 保存以后，（开始之前）
+    // 1 work 开始以后，（停止之前）
+    // 2 done 停止以后，（保存以前）
+    public boolean isStart() {
+        if (IsStart == 1) {
+            return true;
         } else {
-            ComA.setPort("/dev/ttyMT1");
-        }
-
-        ComA.setBaudRate("115200");
-        OpenComPort(ComA);
-    }
-
-    //----------------------------------------------------串口控制类
-    private class SerialControl extends SerialHelper {
-
-        public SerialControl() {
-        }
-
-        protected void onDataReceived(ComBean ComRecData) {
-            // TODO Auto-generated method stub
-            DispQueue.AddQueue(ComRecData); //线程定时刷新显示(推荐)
+            return false;
         }
     }
 
-    public void DispQueueStart() {
-        //串口控制
-        ComA = new SerialControl();
-        DispQueue = new DispQueueThread();
-        setControls();
-        DispQueue.start();
-    }
-
-    /**
-     * function ：打开串口
-     */
-    public void OpenComPort(SerialHelper ComPort) {
-        try {
-            ComPort.open();
-        } catch (SecurityException e) {
-            Toasty.info(this, "打开串口失败:没有串口读/写权限!");
-        } catch (IOException e) {
-            Toasty.info(this, "打开串口失败:未知错误!");
-        } catch (InvalidParameterException e) {
-            Toasty.info(this, "打开串口失败:参数错误!");
+    //0 wait 保存以后，开始之前
+    // 1 work 开始以后，停止之前
+    // 2 done 停止以后，保存以前
+    public boolean isDown() {//是否停止了
+        if (IsStart == 2) {
+            return true;
+        } else {
+            return false;
         }
     }
 
+    //0 wait 保存以后，开始之前
+    // 1 work 开始以后，停止之前
+    // 2 done 停止以后，保存以前
+    public boolean isWait() {
+        if (IsStart == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
+    public synchronized void SetFiveOne(int index) {
+        IsTx[index] = System.currentTimeMillis();
+    }
+
+    public synchronized void SetCaiji() {
+        CaijiTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public void onBackPressed() {
+        Dialog dialog = new AlertDialog.Builder(TestActivity.this).setTitle("选择此任务状态")
+                .setIcon(R.drawable.complete)
+                .setMessage("测试任务是否完成？")
+                .setPositiveButton("已完成", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mtask.set_IsCompleteTask(true);
+                        GreateTaskUtils.update(mtask);
+                        dialog.dismiss();
+                        finish();
+                    }
+                }).setNegativeButton("未完成", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                }).show();
+    }
+
+    //设置历史任务
     private void getData() {
         mdata = new DataFZQ();
-
         try {
             mdata.SetHisTask(myApp.getTaskEnity());
             mdata.initSensors();
             mdata.Refresh();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -470,15 +331,11 @@ public class TestActivity extends AppCompatActivity {
      * description:初始化Fragment  和 ViewPager
      */
     private void initViewPager() {
-//        parameterFragment = new ParameterFragment();
         dataFragment = new DataFragment();
         dataFragment.setDataManage(false);
         testFragment = new TestFragment();
-
-
         //构造适配器
         List<Fragment> fragments = new ArrayList<>();
-//        fragments.add(parameterFragment);
         fragments.add(testFragment);
         fragments.add(dataFragment);
         TestPagerAdapter mViewPagerAdapter = new TestPagerAdapter(getSupportFragmentManager(), fragments);
@@ -487,9 +344,7 @@ public class TestActivity extends AppCompatActivity {
         String[] tittle = {"测  试", "数  据"};
         tl.setViewPager(viewPager, tittle);
         initEvent();
-
     }
-
 
     private void initEvent() {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -507,9 +362,6 @@ public class TestActivity extends AppCompatActivity {
                         tl.setCurrentTab(1, true);
                         dataFragment.InitList(false);
                         break;
-//                    case 2:
-//                        tl.setCurrentTab(2, true);
-//                        break;
                 }
             }
 
@@ -542,7 +394,6 @@ public class TestActivity extends AppCompatActivity {
 
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -554,265 +405,295 @@ public class TestActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // DataType.DATA_OK_PARSE : 返回整的串口数据包
-        // DataType.DATA_NO_PARSE : 返回不进行校验的数据，不按完整数据包返回。
 
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ComA.close();
-
-        handler.removeCallbacksAndMessages(null);
-
-    }
-
-
-    //----------------------------------------------------刷新显示线程
-    private class DispQueueThread extends Thread {
-        private Queue<ComBean> QueueList = new LinkedList<ComBean>();
-
-        @Override
-        public void run() {
-            super.run();
-            while (!isInterrupted()) {
-                final ComBean ComData;
-
-                try {
-                    while ((ComData = QueueList.poll()) != null) {
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                DispRecData(ComData);
-                            }
-                        });
-                        try {
-                            Thread.sleep(10);//显示性能高的话，可以把此数值调小。
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        public synchronized void AddQueue(ComBean ComData) {
-            QueueList.add(ComData);
-        }
-    }
-
-    private void DispRecData(ComBean comRecData) {
-
-        xianshi(comRecData);
-    }
-
-    // ----------------smilekun---------------------------------——显示线程中测试数据解析加显示
-
-    void xianshi(ComBean ComRecData) {
-
-        int msingal, mpower;
-        // 获取加速度数据
-        if (ComRecData.bRec.length > 9) {
-        }
-        // 如果没有进行传感器设置，会进行传感器检测 （完善重新发送配置指令 ）
-
-        if (ComRecData.bRec.length > 9) {
-            Leixing = Math.abs((int) ComRecData.bRec[9]);
-        }
-        switch (Leixing) {
-
-            case 95:// 激光测距
-                int ki = 12;
-                int Lcount = ComRecData.bRec[10];// 传感器编号
-                byte[] LbufferLA = new byte[8];
-                LbufferLA[0] = ComRecData.bRec[ki + 2];
-                LbufferLA[1] = ComRecData.bRec[ki + 3];
-                LbufferLA[2] = ComRecData.bRec[ki + 4];
-                LbufferLA[3] = ComRecData.bRec[ki + 5];
-                LbufferLA[4] = ComRecData.bRec[ki + 6];
-                LbufferLA[5] = ComRecData.bRec[ki + 7];
-                LbufferLA[6] = ComRecData.bRec[ki + 8];
-                LbufferLA[7] = ComRecData.bRec[ki + 9];
-                // 距离
-                String Length = (new String(LbufferLA, 1, 7,
-                        Charset.forName("ASCII")));
-
-                try {
-                    LengthList[Lcount] = Float.parseFloat(Length) * 1000 + Float.parseFloat(Length.substring(4, 5)) / 10 + (float) (Math.random() - 0.5) / 10;
-                    if (IsStart != 2)//点击保存以后，点击停止之前
-                    {
-                        ChangeList[Lcount] = Math.abs(LengthList[Lcount]
-                                - PreList[Lcount]);
-                    }
-
-                    msingal = ComRecData.bRec[23] < 0 ? 256 + ComRecData.bRec[23] : ComRecData.bRec[23];
-                    mpower = MyFunction.twoBytesToInt(ComRecData.bRec, 21);
-                    mdata.setSensor(Lcount, mpower, msingal, 1);
-                    SetFiveOne(Lcount);
-
-                    break;
-                } catch (Exception e) {
-                }
-                break;
-            case 92: // 加速度
-                if (ComRecData.bRec[13] == 7) {//心跳包
-//                        TVEdtxTgJsd.setBackground(drawable);
-//                        TVSearchJsd.setText("加速度传感器已连接");
-                    if (!IsReady) {
-                        IsReady = false;
-                        IsBuzy = false;
-                        IsWait = true;
-                    }
-                    msingal = ComRecData.bRec[17] < 0 ? 256 + ComRecData.bRec[17] : ComRecData.bRec[17];
-                    mpower = MyFunction.twoBytesToInt(ComRecData.bRec, 15);
-                    mdata.setSensor(0, mpower, msingal, 1);
-
-                    // SetJsdWait();
-                } else if (ComRecData.bRec[13] == 1) {//数据传输
-
-                    IsReady = false;
-                    IsBuzy = true;
-                    IsWait = false;
-                    switch (ComRecData.bRec[14] % 4) {
-                    }
-
-                    mJsdBuffer.add(ComRecData.bRec);
-
-                    JsdCount = ComRecData.bRec[14];
-
-                    if (IsBuzy && ComRecData.bRec[14] >= 51) {
-                        IsBuzy = false;
-                        testFragment.setstartenable();
-                    }
-                    if (ComRecData.bRec[14] >= 59) {
-                        setStart(2);
-                        Draw();
-                        drawrefresh();
-//                            TVSearchJsd.setText("加速度数据采集完成！");
-//                            TVEdtxTgJsd.setBackground(drawable);
-
-
-                    }
-                    msingal = ComRecData.bRec[17] < 0 ? 256 + ComRecData.bRec[17] : ComRecData.bRec[17];
-                    mpower = MyFunction.twoBytesToInt(ComRecData.bRec, 15);
-                    mdata.setSensor(0, mpower, msingal, 1);
-                } else if (ComRecData.bRec[13] == 2) {//准备就绪
-                    IsReady = true;
-                    IsWait = false;
-                    IsBuzy = false;
-//                        StopButton.setEnabled(true);
-//                        StartButton.setEnabled(false);
-//                        ExitButton.setEnabled(false);
-//                        FenxiButton.setEnabled(false);
-//                        ReSendButton.setEnabled(false);
-                }
-                SetFiveOne(indexJsd);
-
-                break;
-        }
-
-    }
-
+    //onCreat方法里面调用，0.5秒钟更新一次
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-
-//            if (shuaXin) {
-            DataFZQ.sensor[] ms = mdata.getSensors();
-
-            for (int i = 0; i < 8; i++) {
-                showLength[i] = df2.format(LengthList[i]) + "mm";
-                showWy[i] = df2.format(ChangeList[i]) + "mm";
-            }
-
-            if ((TimeBetween(IsTx[0]) < 1000 || IsReady)) {
-                testFragment.msensorfragment.SetSensor("加速度", ms[0].getMpower(), ms[0].getMsignal(), 1);
-
-                testFragment.setJsdState(5);
-            } else if (TimeBetween(IsTx[0]) > 1000 * TxDelay) {
-                testFragment.setJsdState(0);
-            }
-            if (TimeBetween(IsTx[1]) < 1000) {
-                testFragment.msensorfragment.SetSensor("测距1", ms[1].getMpower(), ms[1].getMsignal(), 1);
-            } else if (TimeBetween(IsTx[1]) > 1000 * TxDelay) {
-                showLength[1] = "-- mm";
-            }
-            if (TimeBetween(IsTx[2]) < 1000) {
-                testFragment.msensorfragment.SetSensor("测距2", ms[2].getMpower(), ms[2].getMsignal(), 1);
-            } else if (TimeBetween(IsTx[2]) > 1000 * TxDelay) {
-                showLength[2] = "-- mm";
-            }
-            if (TimeBetween(IsTx[3]) < 1000) {
-                testFragment.msensorfragment.SetSensor("测距3", ms[3].getMpower(), ms[3].getMsignal(), 1);
-            } else if (TimeBetween(IsTx[3]) > 1000 * TxDelay) {
-                showLength[3] = "-- mm";
-            }
-            if (TimeBetween(IsTx[4]) < 1000) {
-                testFragment.msensorfragment.SetSensor("测距4", ms[4].getMpower(), ms[4].getMsignal(), 1);
-            } else if (TimeBetween(IsTx[4]) > 1000 * TxDelay) {
-                showLength[4] = "-- mm";
-            }
-            if (TimeBetween(IsTx[5]) < 1000) {
-                testFragment.msensorfragment.SetSensor("测距5", ms[5].getMpower(), ms[5].getMsignal(), 1);
-            } else if (TimeBetween(IsTx[5]) > 1000 * TxDelay) {
-                showLength[5] = "-- mm";
-            }
-            if (TimeBetween(IsTx[6]) < 1000) {
-                testFragment.msensorfragment.SetSensor("测距6", ms[6].getMpower(), ms[6].getMsignal(), 1);
-            } else if (TimeBetween(IsTx[6]) > 1000 * TxDelay) {
-                showLength[6] = "-- mm";
-            }
-            if (TimeBetween(IsTx[7]) < 1000) {
-                testFragment.msensorfragment.SetSensor("测距7", ms[7].getMpower(), ms[7].getMsignal(), 1);
-            } else if (TimeBetween(IsTx[7]) > 1000 * TxDelay) {
-                showLength[7] = "-- mm";
-            }
-
-
-            if (System.currentTimeMillis() > pretime + 1000) {
-                pretime = System.currentTimeMillis();
-                if (!IsReady) {
-                    if (testFragment.getJsdState() != 0) {
-                        testFragment.setJsdState(4);
+            if (!IsTg) {//如果此时是静负荷测试
+                //如果6个传感器都连上了
+                if (MyApp.wy1Connected && MyApp.wy2Connected && MyApp.wy3Connected && MyApp.wy4Connected && MyApp.wy5Connected && MyApp.wy6Connected) {
+                    //if (shuaXin) {
+                    //同时解析6个传感器的数据
+                    byte[] buffer0 = new byte[8];//每个传感器数据长度是8
+                    byte[] buffer1 = new byte[8];//每个传感器数据长度是8
+                    byte[] buffer2 = new byte[8];//每个传感器数据长度是8
+                    byte[] buffer3 = new byte[8];//每个传感器数据长度是8
+                    byte[] buffer4 = new byte[8];//每个传感器数据长度是8
+                    byte[] buffer5 = new byte[8];//每个传感器数据长度是8
+                    //解析6个位移传感器包（comBean在MyApp中静态保存）
+                    parserRecData(buffer0, buffer1, buffer2, buffer3, buffer4, buffer5);
+                    //6个距离(注意：得到的数据第一位是 ： ，所以不取，从第二位开始取)
+                    String length0 = new String(buffer0, 1, 7, Charset.forName("ASCII"));
+                    String length1 = new String(buffer1, 1, 7, Charset.forName("ASCII"));
+                    String length2 = new String(buffer2, 1, 7, Charset.forName("ASCII"));
+                    String length3 = new String(buffer3, 1, 7, Charset.forName("ASCII"));
+                    String length4 = new String(buffer4, 1, 7, Charset.forName("ASCII"));
+                    String length5 = new String(buffer5, 1, 7, Charset.forName("ASCII"));
+                    Log.i("jkj", "run: " + Arrays.toString(buffer0) + "\n" + Arrays.toString(buffer1) + "\n" + Arrays.toString(buffer2) + "\n" +
+                            Arrays.toString(buffer3) + "\n" + Arrays.toString(buffer4) + "\n" + Arrays.toString(buffer5) + "\n");
+                    Log.i("jkj", "run: " + length0 + "\n" + length1 + "\n" + length2 + "\n" + length3 + "\n" + length4 + "\n" + length5);
+                    LengthList[0] = Float.parseFloat(length0) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    LengthList[1] = Float.parseFloat(length1) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    LengthList[2] = Float.parseFloat(length2) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    LengthList[3] = Float.parseFloat(length3) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    LengthList[4] = Float.parseFloat(length4) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    LengthList[5] = Float.parseFloat(length5) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    //判断此时如果处于开始后，停止前，那么 位移（改变的距离） = 显示的距离 - 之前的距离
+                    //如果此时处于停止后，那么位移应该不变，不被赋值就行了
+                    if (IsStart == 1) {//开始后
+                        for (int i = 0; i < 6; i++) {//6个传感器
+                            ChangeList[i] = Math.abs(LengthList[i] - PreList[i]);
+                        }
                     }
+                    for (int i = 0; i < 6; i++) {
+                        //showLength--当前距离，送显
+                        showLength[i] = df2.format(LengthList[i]) + "mm";// LengthList--当前距离
+                        //showWy--位移差，送显
+                        showWy[i] = df2.format(ChangeList[i]) + "mm";// ChangeList--位移距离，保存用
+                    }
+                    refresh();//更新显示数据
                 }
-                if (!IsBuzy && !IsReady && !IsWait) {
-//                    Draw();
-//                    drawrefresh();
-//                    Toasty.info(TestActivity.this, "Draw");
-
-
-                }
-                refresh();
-
-            } else if (testFragment.getJsdState() != 0) {
-                if (IsBuzy) {
-                    testFragment.setJsdState(3);
-                }
-                if (IsWait) {
-                    testFragment.setJsdState(1);
-                }
-                if (IsReady) {
-                    testFragment.setJsdState(2);
+            } else {//如果此时是脱钩测试
+                if (MyApp.wy1Connected && MyApp.wy2Connected && MyApp.wy3Connected && MyApp.wy4Connected
+                        && MyApp.wy5Connected && MyApp.wy6Connected && MyApp.wy7Connected && MyApp.jsdConnected) {
+                    //同时解析七个位移传感器的数据
+                    byte[] buffer0 = new byte[8];//每个传感器数据长度是8
+                    byte[] buffer1 = new byte[8];//每个传感器数据长度是8
+                    byte[] buffer2 = new byte[8];//每个传感器数据长度是8
+                    byte[] buffer3 = new byte[8];//每个传感器数据长度是8
+                    byte[] buffer4 = new byte[8];//每个传感器数据长度是8
+                    byte[] buffer5 = new byte[8];//每个传感器数据长度是8
+                    byte[] buffer6 = new byte[8];//每个传感器数据长度是8
+                    //解析七个位移传感器包（comBean在MyApp中静态保存）
+                    parserRecDataTg(buffer0, buffer1, buffer2, buffer3, buffer4, buffer5, buffer6);
+                    //七个距离(注意：得到的数据第一位是 ： ，所以不取，从第二位开始取)
+                    String length0 = new String(buffer0, 1, 7, Charset.forName("ASCII"));
+                    String length1 = new String(buffer1, 1, 7, Charset.forName("ASCII"));
+                    String length2 = new String(buffer2, 1, 7, Charset.forName("ASCII"));
+                    String length3 = new String(buffer3, 1, 7, Charset.forName("ASCII"));
+                    String length4 = new String(buffer4, 1, 7, Charset.forName("ASCII"));
+                    String length5 = new String(buffer5, 1, 7, Charset.forName("ASCII"));
+                    String length6 = new String(buffer6, 1, 7, Charset.forName("ASCII"));
+                    //七个位移传感器的数据
+                    LengthListTg[0] = Float.parseFloat(length0) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    LengthListTg[1] = Float.parseFloat(length1) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    LengthListTg[2] = Float.parseFloat(length2) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    LengthListTg[3] = Float.parseFloat(length3) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    LengthListTg[4] = Float.parseFloat(length4) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    LengthListTg[5] = Float.parseFloat(length5) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    LengthListTg[6] = Float.parseFloat(length6) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    //判断此时如果处于开始后，停止前，那么 位移（改变的距离） = 显示的距离 - 之前的距离
+                    //如果此时处于停止后，那么位移应该不变，不被赋值就行了
+                    if (IsStart == 1) {//开始后
+                        for (int i = 0; i < 7; i++) {//七个传感器
+                            ChangeListTg[i] = Math.abs(LengthListTg[i] - PreListTg[i]);
+                        }
+                    }
+                    for (int i = 0; i < 7; i++) {
+                        //showLength--当前距离，送显
+                        showLengthTg[i] = df2.format(LengthListTg[i]) + "mm";// LengthList--当前距离
+                        //showWy--位移差，送显
+                        showWyTg[i] = df2.format(ChangeListTg[i]) + "mm";// ChangeList--位移距离，保存用
+                    }
+                    refresh();//更新显示数据
                 }
             }
-
-            // }
-
-            handler.postDelayed(this, 250);
+            handler.postDelayed(this, 1000);
         }
     };
 
-    public void refresh() {
+    //解析6个位移传感器包
+    public void parserRecData(byte[] buffer1, byte[] buffer2, byte[] buffer3, byte[] buffer4, byte[] buffer5, byte[] buffer6) {
+        buffer1[0] = MyApp.comBeanWy1.recData[14];
+        buffer1[1] = MyApp.comBeanWy1.recData[15];
+        buffer1[2] = MyApp.comBeanWy1.recData[16];
+        buffer1[3] = MyApp.comBeanWy1.recData[17];
+        buffer1[4] = MyApp.comBeanWy1.recData[18];
+        buffer1[5] = MyApp.comBeanWy1.recData[19];
+        buffer1[6] = MyApp.comBeanWy1.recData[20];
+        buffer1[7] = MyApp.comBeanWy1.recData[21];
 
-        TestFragment.refresh();
+        buffer2[0] = MyApp.comBeanWy2.recData[14];
+        buffer2[1] = MyApp.comBeanWy2.recData[15];
+        buffer2[2] = MyApp.comBeanWy2.recData[16];
+        buffer2[3] = MyApp.comBeanWy2.recData[17];
+        buffer2[4] = MyApp.comBeanWy2.recData[18];
+        buffer2[5] = MyApp.comBeanWy2.recData[19];
+        buffer2[6] = MyApp.comBeanWy2.recData[20];
+        buffer2[7] = MyApp.comBeanWy2.recData[21];
+
+        buffer3[0] = MyApp.comBeanWy3.recData[14];
+        buffer3[1] = MyApp.comBeanWy3.recData[15];
+        buffer3[2] = MyApp.comBeanWy3.recData[16];
+        buffer3[3] = MyApp.comBeanWy3.recData[17];
+        buffer3[4] = MyApp.comBeanWy3.recData[18];
+        buffer3[5] = MyApp.comBeanWy3.recData[19];
+        buffer3[6] = MyApp.comBeanWy3.recData[20];
+        buffer3[7] = MyApp.comBeanWy3.recData[21];
+
+        buffer4[0] = MyApp.comBeanWy4.recData[14];
+        buffer4[1] = MyApp.comBeanWy4.recData[15];
+        buffer4[2] = MyApp.comBeanWy4.recData[16];
+        buffer4[3] = MyApp.comBeanWy4.recData[17];
+        buffer4[4] = MyApp.comBeanWy4.recData[18];
+        buffer4[5] = MyApp.comBeanWy4.recData[19];
+        buffer4[6] = MyApp.comBeanWy4.recData[20];
+        buffer4[7] = MyApp.comBeanWy4.recData[21];
+
+        buffer5[0] = MyApp.comBeanWy5.recData[14];
+        buffer5[1] = MyApp.comBeanWy5.recData[15];
+        buffer5[2] = MyApp.comBeanWy5.recData[16];
+        buffer5[3] = MyApp.comBeanWy5.recData[17];
+        buffer5[4] = MyApp.comBeanWy5.recData[18];
+        buffer5[5] = MyApp.comBeanWy5.recData[19];
+        buffer5[6] = MyApp.comBeanWy5.recData[20];
+        buffer5[7] = MyApp.comBeanWy5.recData[21];
+
+        buffer6[0] = MyApp.comBeanWy6.recData[14];
+        buffer6[1] = MyApp.comBeanWy6.recData[15];
+        buffer6[2] = MyApp.comBeanWy6.recData[16];
+        buffer6[3] = MyApp.comBeanWy6.recData[17];
+        buffer6[4] = MyApp.comBeanWy6.recData[18];
+        buffer6[5] = MyApp.comBeanWy6.recData[19];
+        buffer6[6] = MyApp.comBeanWy6.recData[20];
+        buffer6[7] = MyApp.comBeanWy6.recData[21];
+    }
+
+    //解析七个位移传感器包
+    public void parserRecDataTg(byte[] buffer1, byte[] buffer2, byte[] buffer3, byte[] buffer4, byte[] buffer5, byte[] buffer6, byte[] buffer7) {
+        buffer1[0] = MyApp.comBeanWy1.recData[14];
+        buffer1[1] = MyApp.comBeanWy1.recData[15];
+        buffer1[2] = MyApp.comBeanWy1.recData[16];
+        buffer1[3] = MyApp.comBeanWy1.recData[17];
+        buffer1[4] = MyApp.comBeanWy1.recData[18];
+        buffer1[5] = MyApp.comBeanWy1.recData[19];
+        buffer1[6] = MyApp.comBeanWy1.recData[20];
+        buffer1[7] = MyApp.comBeanWy1.recData[21];
+
+        buffer2[0] = MyApp.comBeanWy2.recData[14];
+        buffer2[1] = MyApp.comBeanWy2.recData[15];
+        buffer2[2] = MyApp.comBeanWy2.recData[16];
+        buffer2[3] = MyApp.comBeanWy2.recData[17];
+        buffer2[4] = MyApp.comBeanWy2.recData[18];
+        buffer2[5] = MyApp.comBeanWy2.recData[19];
+        buffer2[6] = MyApp.comBeanWy2.recData[20];
+        buffer2[7] = MyApp.comBeanWy2.recData[21];
+
+        buffer3[0] = MyApp.comBeanWy3.recData[14];
+        buffer3[1] = MyApp.comBeanWy3.recData[15];
+        buffer3[2] = MyApp.comBeanWy3.recData[16];
+        buffer3[3] = MyApp.comBeanWy3.recData[17];
+        buffer3[4] = MyApp.comBeanWy3.recData[18];
+        buffer3[5] = MyApp.comBeanWy3.recData[19];
+        buffer3[6] = MyApp.comBeanWy3.recData[20];
+        buffer3[7] = MyApp.comBeanWy3.recData[21];
+
+        buffer4[0] = MyApp.comBeanWy4.recData[14];
+        buffer4[1] = MyApp.comBeanWy4.recData[15];
+        buffer4[2] = MyApp.comBeanWy4.recData[16];
+        buffer4[3] = MyApp.comBeanWy4.recData[17];
+        buffer4[4] = MyApp.comBeanWy4.recData[18];
+        buffer4[5] = MyApp.comBeanWy4.recData[19];
+        buffer4[6] = MyApp.comBeanWy4.recData[20];
+        buffer4[7] = MyApp.comBeanWy4.recData[21];
+
+        buffer5[0] = MyApp.comBeanWy5.recData[14];
+        buffer5[1] = MyApp.comBeanWy5.recData[15];
+        buffer5[2] = MyApp.comBeanWy5.recData[16];
+        buffer5[3] = MyApp.comBeanWy5.recData[17];
+        buffer5[4] = MyApp.comBeanWy5.recData[18];
+        buffer5[5] = MyApp.comBeanWy5.recData[19];
+        buffer5[6] = MyApp.comBeanWy5.recData[20];
+        buffer5[7] = MyApp.comBeanWy5.recData[21];
+
+        buffer6[0] = MyApp.comBeanWy6.recData[14];
+        buffer6[1] = MyApp.comBeanWy6.recData[15];
+        buffer6[2] = MyApp.comBeanWy6.recData[16];
+        buffer6[3] = MyApp.comBeanWy6.recData[17];
+        buffer6[4] = MyApp.comBeanWy6.recData[18];
+        buffer6[5] = MyApp.comBeanWy6.recData[19];
+        buffer6[6] = MyApp.comBeanWy6.recData[20];
+        buffer6[7] = MyApp.comBeanWy6.recData[21];
+
+        buffer7[0] = MyApp.comBeanWy7.recData[14];
+        buffer7[1] = MyApp.comBeanWy7.recData[15];
+        buffer7[2] = MyApp.comBeanWy7.recData[16];
+        buffer7[3] = MyApp.comBeanWy7.recData[17];
+        buffer7[4] = MyApp.comBeanWy7.recData[18];
+        buffer7[5] = MyApp.comBeanWy7.recData[19];
+        buffer7[6] = MyApp.comBeanWy7.recData[20];
+        buffer7[7] = MyApp.comBeanWy7.recData[21];
+    }
+
+    public void refresh() {//更新数据
+        testFragment.refresh();
+    }
+
+    //当传感器断开时，用此方法将静负荷界面数据全置为 0
+    //并且将此时的按钮置为开始、换背景
+    public void refreshNullData() {
+        testFragment.refreshNull();
+    }
+
+    /**
+     * 加速度置为断开
+     * 进度条置零
+     * 初始化图像
+     * textView置零
+     */
+    public void refreshJsdNull() {
+        testFragment.refreshJsdNull();
+        testFragment.initTg();
+    }
+
+    public void saveJfh() {//保存静负荷测试
+        for (int i = 0; i < 6; i++) {
+            PreList[i] = 0;//保存后，把之前的距离清空
+            ChangeList[i] = 0;
+            LengthList[i] = 0;
+        }
+    }
+
+    public void saveTg() {//保存后,清空记录的数据
+        for (int i = 0; i < 7; i++) {
+            PreListTg[i] = 0;//保存后，把之前的距离清空
+            ChangeListTg[i] = 0;
+            LengthListTg[i] = 0;
+        }
+        MaxIndex = 0;
+        MaxJsd = 0;
+        MinJsd = 0;
+        SUMJSD = 0;
+        mJsdBuffer.clear();
+        mJsd = 0;// ？？加速度
+        mPjJsd = 0;//？？加速度
+        mKxcjl = 0;//空行程距离
+        mKxcsj = 0;//空行程时间
+        mZdsj = 0;//制动时间
+    }
+
+    public void clearTg() {//开始后,清空记录的数据
+        MaxIndex = 0;
+        MaxJsd = 0;
+        MinJsd = 0;
+        SUMJSD = 0;
+        mJsdBuffer.clear();
+        mJsd = 0;// ？？加速度
+        mPjJsd = 0;//？？加速度
+        mKxcjl = 0;//空行程距离
+        mKxcsj = 0;//空行程时间
+        mZdsj = 0;//制动时间
+    }
+
+    public void startJfh() {//开始静负荷测试，在TestFragment中调用
+        //把LengthList copy到PreList中去，记录一个PreList的初始值
+        System.arraycopy(LengthList, 0, PreList, 0, 6);
+    }
+
+    public void startTg() {//开始脱钩测试，在TestFragment中调用
+        //LengthListTg copy到PreListTg中去，记录一个PreListTg的初始值
+        System.arraycopy(LengthListTg, 0, PreListTg, 0, 7);
     }
 
     public void initdata() {
@@ -822,32 +703,38 @@ public class TestActivity extends AppCompatActivity {
     public boolean SaveData() {
         boolean isSave = false;
         TaskResEnity mres = new TaskResEnity();
-        mdata.CopyRes(mres);
+        mdata.CopyRes(mres);//DataFZQ mdata
         try {
             mres.setSaveType(IsTg ? 1 : 0);
-            mres.setXk1(ChangeList[indexXk1]);
-            mres.setXk2(ChangeList[indexXk1]);
-            mres.setXdzds1(ChangeList[indexXk1]);
-            mres.setXdzds2(ChangeList[indexXk1]);
-            mres.setXdhcs1(ChangeList[indexXk1]);
-            mres.setXdhcs2(ChangeList[indexXk1]);
-            if (IsTg) {
-                mres.setXjgd(ChangeList[indexXk1]);
-                String CurveData = mDrawList[0] + "";
+            if (IsTg) {//脱钩保存
+                mres.setXk1(ChangeListTg[0]);//楔块1
+                mres.setXk2(ChangeListTg[1]);//楔块2
+                mres.setXdzds1(ChangeListTg[2]);//制动绳1
+                mres.setXdzds2(ChangeListTg[3]);//制动绳2
+                mres.setXdhcs1(ChangeListTg[4]);//缓冲绳1
+                mres.setXdhcs2(ChangeListTg[5]);//缓冲绳2
+                mres.setXjgd(ChangeListTg[6]);//下降高度
+                String CurveData = mDrawList[0] + "";// 加速度曲线数据
                 for (int i = 1; i < mDrawList.length; i++) {
-
                     CurveData = CurveData + "|" + mDrawList[i];
                 }
-                mres.setCurve(CurveData);
-                mres.setZdjsd(mJsd);
-                mres.setPjjsd(mPjJsd);
-                mres.setKxcjl(mKxcjl);
-                mres.setKxcsj(mKxcsj);
-                mres.setZdsj(mZdsj);
+                mres.setCurve(CurveData);// 加速度曲线数据
+                mres.setZdjsd(0 - mJsd);// 加速度
+                mres.setPjjsd(0 - mPjJsd);//平均加速度
+                mres.setKxcjl(mKxcjl);//空行程距离
+                mres.setKxcsj(mKxcsj);//空行程时间
+                mres.setZdsj(mZdsj / 4);//制动时间
+            } else {//静负荷保存
+                mres.setXk1(ChangeList[0]);//楔块1
+                mres.setXk2(ChangeList[1]);//楔块2
+                mres.setXdzds1(ChangeList[2]);//制动绳1
+                mres.setXdzds2(ChangeList[3]);//制动绳2
+                mres.setXdhcs1(ChangeList[4]);//缓冲绳1
+                mres.setXdhcs2(ChangeList[5]);//缓冲绳2
             }
             mres.setSaveTime(getSysTime());
             MyApp.getDaoInstant().getTaskResEnityDao().insert(mres);
-            dataFragment.GetData();
+            dataFragment.GetData();//数据界面保存数据
             isSave = true;
             SetCaiji();
         } catch (Exception e) {
@@ -860,12 +747,10 @@ public class TestActivity extends AppCompatActivity {
             Toasty.error(this, "数据保存失败！", Toast.LENGTH_SHORT, true).show();
         }
         return isSave;
-
     }
 
-    // -------------------------------------------------——-------------------获取系统时间
+    //获取系统时间
     String getSysTime() {
-// shijain
         String datesString;
         String monthString;
         String houString;
@@ -909,53 +794,11 @@ public class TestActivity extends AppCompatActivity {
         return dString;
     }
 
-    private void SetSensor(SensorView msv, Integer index) {
-        DataFZQ.sensor mS = mdata.getSensors()[index];
-        SensorData svData = new SensorData();
-        // 第二步：设置 SensorData 属性
-        svData.setStatus(mS.getMstate())
-                .setPower(mS.getMpower())
-                .setSignal(mS.getMsignal());
 
-        // 第三步：给SensorView 赋值
-        msv.setData(svData);
+    public void StartJsd() {//开始加速度测试
+        Log.d("hhg", "发送开始测试指令-----------------------------");
+        sendPortData(ComA, "4B590CA40100010206A401000002010a"); // 发送加速度准备
     }
-
-    public void StartJsd() {
-        if (IsStart == 2)//点击停止后
-        {
-
-        } else if (IsStart == 1)//点击开始后
-        {
-            for (int i = 0; i < 8; i++) {
-                PreList[i] = LengthList[i];
-            }
-            if (IsTg) {
-                mJsdBuffer = new ArrayList<byte[]>();
-                new Handler().postDelayed(new Runnable() {
-
-                    public void run() {
-
-                        sendPortData(ComA, "4B590CA40100010206A401000002010a"); // 发送加速度准备
-                    }
-                }, 100);
-            }
-        } else if (IsStart == 0)//点击保存后
-        {
-            for (int i = 0; i < 8; i++) {
-                PreList[i] = 0;
-                ChangeList[i]=0;
-            }
-        }
-
-
-    }
-
-    public void drawrefresh() {
-        fenxi();
-        testFragment.drawjsd();
-    }
-
 
     // ----------------------------------------------------串口发送
     private void sendPortData(SerialHelper ComPort, String sOut) {
@@ -964,263 +807,333 @@ public class TestActivity extends AppCompatActivity {
         }
     }
 
+    private void onReceivedSensorData() {
+        ComA.setOnReceivedSensorListener(new SerialControl.OnReceivedSensorData() {
+            @Override
+            public void updateSensor(final ISensorInf sensorInf) {//更新传感器状态
+                switch (sensorInf.getSensorType()) {
+                    case 1:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SensorData sensorData1 = new SensorData(sensorInf.getPower(), sensorInf.getSignal(), SensorInf.NORMAL, System.currentTimeMillis());
+                                testFragment.msensorfragment.setWy1(sensorData1);
+                            }
+                        });
+                        break;
+                    case 2:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SensorData sensorData2 = new SensorData(sensorInf.getPower(), sensorInf.getSignal(),
+                                        SensorInf.NORMAL, System.currentTimeMillis());
+                                testFragment.msensorfragment.setWy2(sensorData2);
+                            }
+                        });
+                        break;
+                    case 3:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SensorData sensorData3 = new SensorData(sensorInf.getPower(), sensorInf.getSignal(),
+                                        SensorInf.NORMAL, System.currentTimeMillis());
+                                testFragment.msensorfragment.setWy3(sensorData3);
+                            }
+                        });
+                        break;
+                    case 4:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SensorData sensorData4 = new SensorData(sensorInf.getPower(), sensorInf.getSignal(),
+                                        SensorInf.NORMAL, System.currentTimeMillis());
+                                testFragment.msensorfragment.setWy4(sensorData4);
+                            }
+                        });
+                        break;
+                    case 5:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SensorData sensorData5 = new SensorData(sensorInf.getPower(), sensorInf.getSignal(),
+                                        SensorInf.NORMAL, System.currentTimeMillis());
+                                testFragment.msensorfragment.setWy5(sensorData5);
+                            }
+                        });
+
+                        break;
+                    case 6:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SensorData sensorData6 = new SensorData(sensorInf.getPower(), sensorInf.getSignal(),
+                                        SensorInf.NORMAL, System.currentTimeMillis());
+                                testFragment.msensorfragment.setWy6(sensorData6);
+                            }
+                        });
+                        break;
+                    case 7:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SensorData sensorData7 = new SensorData(sensorInf.getPower(), sensorInf.getSignal(),
+                                        SensorInf.NORMAL, System.currentTimeMillis());
+                                testFragment.msensorfragment.setWy7(sensorData7);
+                            }
+                        });
+                        break;
+                    case 8:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SensorData sensorData8 = new SensorData(sensorInf.getPower(), sensorInf.getSignal(),
+                                        SensorInf.NORMAL, System.currentTimeMillis());
+                                testFragment.msensorfragment.setJsd(sensorData8);
+                            }
+                        });
+                        break;
+                }
+            }
+
+            @Override
+            public void updateProgressBar(final int progress) {//更新progressBar
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        testFragment.refreshProgressBar(progress);
+                    }
+                });
+
+            }
+
+            @Override
+            public void updateJsdState(final int state) {//更新加速度指示灯状态
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        testFragment.setJsdState(state);
+                    }
+                });
+
+            }
+
+            @Override
+            public void setStartEnable() {//设置开始和保存按钮可点击
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        testFragment.setStartEnable();
+                    }
+                });
+
+            }
+
+            @Override
+            public void setStartDisable() {//设置开始和保存按钮不可点击
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        testFragment.setStartDisable();
+                    }
+                });
+
+            }
+
+            @Override
+            public void draw() {//画图
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mJsdBuffer = ComA.mJsdBuffer;
+                        Draw();//上传完最后一个包后画图
+                        fenxi();
+                        testFragment.drawjsd();
+                    }
+                });
+
+            }
+        });
+    }
+
     public void fenxi() {
-        DecimalFormat df4 = new DecimalFormat("####00.00");
-        DecimalFormat df2 = new DecimalFormat("####00");
+        DecimalFormat df2 = new DecimalFormat("0.00");
+        DecimalFormat df = new DecimalFormat("0");
         // TODO Auto-generated method stub
         // 空行程时间：稳定状态时间 判断拐点，突变点
-        //
         // 空行程距离：空行程时间和稳定加速度计算
-        //
         // 最大加速度：筛选得到
-        //
         // 平均加速度：待定
-        //
         // 制动时间：判断拐点。
-        //
-        //
         // 遍历->1 存入pre和max（？）
         // 2及以后，与pre(+?)-exKxc判断，未超限，下一个
         // 超限，置拐点标志位,存入endkxc与startzd，存入max
         // 继续遍历，与0+-enZero判断。进入范围，存入EndZd，置零点标志位
         // 遍历结束，重置标志位
+        if (mJsdList.length > 2000) {
+            mSdList = new float[mJsdList.length];
+            mDisList = new float[mJsdList.length];
+            // 重置标志位及参照值
+            boolean flagChange = false;// 是否进入制动
+            boolean flagZero = false;// 是否归零
+            boolean flagStart = false;// 是否开始空行程
 
-        try {
-            if (mJsdList.length > 2000) {
-                mSdList = new float[mJsdList.length];
-                mDisList = new float[mJsdList.length];
-                // 重置标志位及参照值
-                boolean flagChange = false;// 是否进入制动
-                boolean flagZero = false;// 是否归零
-                boolean flagStart = false;// 是否开始空行程
+            int StartKxc = 0;// 开始空行程
+            int StartZd = 0;// 开始制动时间
+            int EndKxc = 0;// 空行程结束时间
+            int mAvePreCount = AvePreCount;
+            int EndZd = 10;// 制动结束时间（归零）
 
-                int StartKxc = 0;// 开始空行程
-                int StartZd = 0;// 开始制动时间
-                int EndKxc = 0;// 空行程结束时间
-                int mAvePreCount = AvePreCount;
-                int EndZd = 10;// 制动结束时间（归零）
+            float SumPreJsd = 0;// 前若干加速度和，计算平均加速度
+            float AvePreJsd = 100;// 平均加速度
+            float SumAftJsd = 0;// 前若干加速度和，计算平均加速度
+            // 阈值
 
-                float SumPreJsd = 0;// 前若干加速度和，计算平均加速度
-                float AvePreJsd = 100;// 平均加速度
-                float SumAftJsd = 0;// 前若干加速度和，计算平均加速度
-                // 阈值
+            int SumPreCount = 0;// 加速度累积
 
-                int SumPreCount = 0;// 加速度累积
+            maxSd = 0;
+            // boolean SpeedBelowZero = false;// 判断速度是否小于0
+            // boolean EndSpeed = false;// 是否停止速度判断
+            // 遍历->1 存入pre和max（？）
 
-                // mKxcsj1 = 0;
-                maxSd = 0;
-                // maxDis = 0;
-                // mZdsj1 = 0;
-                // boolean SpeedBelowZero = false;// 判断速度是否小于0
-                // boolean EndSpeed = false;// 是否停止速度判断
-                // 遍历->1 存入pre和max（？）
+            // 空行程结束，开始落体至加速度最大值时间 单位mm
 
-                // 空行程结束，开始落体至加速度最大值时间 单位mm
+            float preJsd = 0;
+            float preTime = 0;
+            int currenti = 0;
 
-                float preJsd = 0;
-                float preTime = 0;
-                int currenti = 0;
+            float tmpPjjsd = (float) (20 + (Math.random()) * 20);
+            float zdsj = (float) (stG * MaxIndex / (tmpPjjsd));
 
-                float tmpPjjsd = (float) (20 + (Math.random()) * 20);
-                float zdsj = (float) (stG * MaxIndex / (tmpPjjsd));
+            EndKxc = (int) (MaxIndex - zdsj / 4);
+            // mKxcsj = (float) ((EndKxc-StartKxc) * 0.25 / 1000);
+            mKxcsj = (float) ((EndKxc) * 0.25 / 1000);
+            float mXjgd = Math.abs(LengthListTg[indexXjgd] - PreListTg[indexXjgd]);
 
+            float mZds = Math.max(Math.abs(LengthListTg[indexXdzds1] - PreListTg[indexXdzds1]),
+                    Math.abs(LengthListTg[indexXdzds2] - PreListTg[indexXdzds2]));
+
+            float mHcs = Math.min(Math.abs(LengthListTg[indexXdhcs1] - PreListTg[indexXdhcs1]),
+                    Math.abs(LengthListTg[indexXdhcs2] - PreListTg[indexXdhcs2]));
+
+            float mmaxLength = 0.0f;
+            if (!((mXjgd - mHcs) > 0) && mXjgd > 0) {
+                mmaxLength = mXjgd;
+            } else if (!(mXjgd > 0) && ((mXjgd - mHcs) > 0)) {
+                mmaxLength = mXjgd - mHcs;
+            } else if ((mXjgd > 0) && ((mXjgd - mHcs) > 0)) {
+                mmaxLength = Math.min((mXjgd - mHcs), mXjgd);
+            }
+
+            while (((0.5 * stG * mKxcsj * mKxcsj * 1000) > mmaxLength * 0.9)
+                    && (mmaxLength != 0.0f)) {
+
+                MaxIndex = (int) (MaxIndex * 0.9);
                 EndKxc = (int) (MaxIndex - zdsj / 4);
                 // mKxcsj = (float) ((EndKxc-StartKxc) * 0.25 / 1000);
                 mKxcsj = (float) ((EndKxc) * 0.25 / 1000);
-                float mXjgd = Math.abs(LengthList[indexXjgd]
-                        - PreList[indexXjgd]);
-                float mZds = Math.max(Math.abs(LengthList[indexXdzds1]
-                        - PreList[indexXdzds1]), Math
-                        .abs(LengthList[indexXdzds2] - PreList[indexXdzds2]));
-                float mHcs = Math.min(Math.abs(LengthList[indexXdhcs1]
-                        - PreList[indexXdhcs1]), Math
-                        .abs(LengthList[indexXdhcs2] - PreList[indexXdhcs2]));
-                float mmaxLength = 0.0f;
-                if (!((mXjgd - mHcs) > 0) && mXjgd > 0) {
-                    mmaxLength = mXjgd;
-                } else if (!(mXjgd > 0) && ((mXjgd - mHcs) > 0)) {
-                    mmaxLength = mXjgd - mHcs;
-                } else if ((mXjgd > 0) && ((mXjgd - mHcs) > 0)) {
-                    mmaxLength = Math.min((mXjgd - mHcs), mXjgd);
-                }
-
-                while (((0.5 * stG * mKxcsj * mKxcsj * 1000) > mmaxLength * 0.9)
-                        && (mmaxLength != 0.0f)) {
-
-                    MaxIndex = (int) (MaxIndex * 0.9);
-                    EndKxc = (int) (MaxIndex - zdsj / 4);
-                    // mKxcsj = (float) ((EndKxc-StartKxc) * 0.25 / 1000);
-                    mKxcsj = (float) ((EndKxc) * 0.25 / 1000);
-//                    Toast.makeText(Test_TG_Activity.this, "正在绘制曲线。", 0).show();
-                }
-                // zdsj = (float) (stG * mKxcsj * 1000 * 4 / (tmpPjjsd));
-//                Toast.makeText(Test_TG_Activity.this, "正在绘制曲线。。。", 0).show();
-
-                for (int i = 0; i < mJsdList.length; i++) {
-                    // 第一部分
-                    // 自由落体，时间0-maxindex-zdsj。值为标准加速度上下0.5浮动--------------------------------------------------------
-                    if (i >= 0 && i < (EndKxc)) {
-                        mDrawList[i] = (float) (stG + Math.random() - 0.5);
-                    }
-                    // 第二部分，制动介入，时间，zdsj*4 值为stG到
-                    // max（-100与min）---------------------------------------------------------------
-                    else if (i >= (EndKxc) && i < EndKxc + zdsj * 0.5 && i > 1) {
-                        // float length=Math.max(-100, MaxJsd)+stG;
-                        // float time=zdsj*4;
-                        // float span=length/time;
-                        mDrawList[i] = (float) (mDrawList[i - 1] + (Math.max(
-                                -100, MaxJsd) - stG)
-                                / (zdsj * 0.5)
-                                * (1 + (Math.random() - 0.5) / 10));
-                    }
-                    // 第三部分
-                    // 加速度减少，时间为2*zdsj*4，值为max（-100与min）到0---------------------------------------------------------------
-                    else if (i >= EndKxc + zdsj * 0.5 && i < EndKxc + zdsj) {
-                        mDrawList[i] = (float) (mDrawList[i - 1] - (Math.max(
-                                -100, MaxJsd))
-                                / (0.5 * zdsj)
-                                * (1 + (Math.random() - 0.5) / 10));
-                    }
-                    // 第四部分，加速度0到stG
-                    // 时间为2*zdsj*4*(1.2+((math。random-0.5)/10)----------------------------------------------------
-                    else if (i >= EndKxc + zdsj && i < EndKxc + zdsj * 1.1) {
-                        mDrawList[i] = (float) (mDrawList[i - 1] + 0.9 * stG
-                                / (zdsj * 0.1)
-                                * (1 + (Math.random() - 0.5) / 10));
-
-                    } else if (i >= EndKxc + zdsj * 1.1
-                            && i < EndKxc + zdsj * 1.55) {
-                        mDrawList[i] = (float) (mDrawList[i - 1] - stG * 1.6
-                                / (zdsj * 0.5)
-                                * (1 + (Math.random() - 0.5) / 30));
-
-                    } else if (i >= EndKxc + zdsj * 1.55
-                            && i < EndKxc + zdsj * 1.8) {
-                        mDrawList[i] = (float) (mDrawList[i - 1] + Math
-                                .abs(mDrawList[(int) (EndKxc + zdsj * 1.55 - 2)])
-                                / (zdsj * 0.3)
-                                * (1 + (Math.random() - 0.5) / 30));
-
-                    }
-                    SUMJSD = SUMJSD + Math.abs(mJsdList[i]);
-
-                }
-                // 震荡部分 值为加速度1到加速度2，加速度2为加速度1的（-0.7+((math。random-0.5)/10)）
-                // 时间为前一段时间*(1.2+((math。random-0.5)/10)
-
-                // float mmkxcjl = 0.0f;
-                // for (int i = 1; i < mSdList.length; i++) {
-                //
-                // // 前距离+（速度1+速度2）/2 * 时间（1/1000/4）*1000
-                // mDisList[i] = mDisList[i - 1]
-                // + (mSdList[i] + mSdList[i - 1]) / 2 / 1000 / 4
-                // * 1000;
-                //
-                // if (i < EndKxc) {
-                // mmkxcjl = mmkxcjl + (mSdList[i] + mSdList[i - 1]) / 2
-                // / 1000 / 4 * 1000;
-                // }
-                // }
-                // mKxcjl = mmkxcjl;
-
-                // 计算相关值
-                mJsd = ((float) MaxJsd);
-
-                // mKxcsj = (float) ((EndKxc-StartKxc) * 0.25 / 1000);
-                mKxcsj = (float) ((EndKxc) * 0.25 / 1000);
-                mZdsj = (float) (zdsj / 1000);
-                mKxcjl = (float) (0.5 * stG * mKxcsj * mKxcsj * 1000);
-
-
-//                TVEdTgKxcsj.setText(df4.format(mKxcsj * 1000));
-//
-//                TVEdTgKxcjl.setText(df4.format(0.5 * stG * mKxcsj * mKxcsj
-//                        * 1000));
-                mPjJsd = tmpPjjsd;
-//
-//                TVEdTgJsd.setText(df4.format(0 - Math.abs(mJsd)));
-//                TVEdTgPjjsd.setText(df4.format(0 - Math.abs(tmpPjjsd)));
-//                TVEdTgZdjl.setText(df4.format(mZdsj / 4 * 1000));
-
-
-                // float endSd = (mSdList[mSdList.length - 1]);
-                // TVEdTgZdjl.setText((df2.format(mZdsj * 1000) + "位移"
-                // + df2.format(maxDis) + "倒制" + df2.format(mZdsj2 * 1000)
-                // + "速空" + df4.format(mKxcsj1 * 1000))
-                // + "末速" + df4.format(endSd));
             }
-//            view = new DrawViewJsd(this);
-//
-//            view.SetSpeedDrawOrNot(DrawSd);
-//            view.SetDisplacementDrawOrNot(DrawDis);
-//            view.setMinimumHeight(550);
-//            view.setMinimumWidth(290);
-//            view.SetPoint(50, 50);
-//            view.invalidate();
-//            // view.SetResourceDataY(mJsdList);
-//            view.SetResourceDataY(mDrawList);
-//            view.SetResourceDataU(mSdList);
-//            view.SetResourceDataD(mDisList);
-//            breathWave.removeAllViews();
-//            breathWave.addView(view);
-        } catch (Exception e) {
-            String a = e.toString();
+
+            for (int i = 0; i < mJsdList.length; i++) {
+                // 第一部分
+                // 自由落体，时间0-maxindex-zdsj。值为标准加速度上下0.5浮动--------------------------------------------------------
+                if (i >= 0 && i < (EndKxc)) {
+                    mDrawList[i] = (float) (stG + Math.random() - 0.5);
+                }
+                // 第二部分，制动介入，时间，zdsj*4 值为stG到
+                // max（-100与min）---------------------------------------------------------------
+                else if (i >= (EndKxc) && i < EndKxc + zdsj * 0.5 && i > 1) {
+                    // float length=Math.max(-100, MaxJsd)+stG;
+                    // float time=zdsj*4;
+                    // float span=length/time;
+                    mDrawList[i] = (float) (mDrawList[i - 1] + (Math.max(
+                            -100, MaxJsd) - stG)
+                            / (zdsj * 0.5)
+                            * (1 + (Math.random() - 0.5) / 10));
+                }
+                // 第三部分
+                // 加速度减少，时间为2*zdsj*4，值为max（-100与min）到0---------------------------------------------------------------
+                else if (i >= EndKxc + zdsj * 0.5 && i < EndKxc + zdsj) {
+                    mDrawList[i] = (float) (mDrawList[i - 1] - (Math.max(
+                            -100, MaxJsd))
+                            / (0.5 * zdsj)
+                            * (1 + (Math.random() - 0.5) / 10));
+                }
+                // 第四部分，加速度0到stG
+                // 时间为2*zdsj*4*(1.2+((math。random-0.5)/10)----------------------------------------------------
+                else if (i >= EndKxc + zdsj && i < EndKxc + zdsj * 1.1) {
+                    mDrawList[i] = (float) (mDrawList[i - 1] + 0.9 * stG
+                            / (zdsj * 0.1)
+                            * (1 + (Math.random() - 0.5) / 10));
+
+                } else if (i >= EndKxc + zdsj * 1.1
+                        && i < EndKxc + zdsj * 1.55) {
+                    mDrawList[i] = (float) (mDrawList[i - 1] - stG * 1.6
+                            / (zdsj * 0.5)
+                            * (1 + (Math.random() - 0.5) / 30));
+
+                } else if (i >= EndKxc + zdsj * 1.55
+                        && i < EndKxc + zdsj * 1.8) {
+                    mDrawList[i] = (float) (mDrawList[i - 1] + Math
+                            .abs(mDrawList[(int) (EndKxc + zdsj * 1.55 - 2)])
+                            / (zdsj * 0.3)
+                            * (1 + (Math.random() - 0.5) / 30));
+
+                }
+                SUMJSD = SUMJSD + Math.abs(mJsdList[i]);
+            }
+            // 震荡部分 值为加速度1到加速度2，加速度2为加速度1的（-0.7+((math。random-0.5)/10)）
+            // 时间为前一段时间*(1.2+((math。random-0.5)/10)
+
+
+            // 计算相关值
+            mJsd = ((float) MaxJsd);
+
+            // mKxcsj = (float) ((EndKxc-StartKxc) * 0.25 / 1000);
+            mKxcsj = (float) ((EndKxc) * 0.25 / 1000);
+            mZdsj = (float) (zdsj / 1000);
+            mKxcjl = (float) (0.5 * stG * mKxcsj * mKxcsj * 1000);
+
+            mPjJsd = tmpPjjsd;
         }
     }
 
-    @SuppressLint("CommitTransaction")
     private void Draw() {
         int mIndex = 0;
-
-
         MaxIndex = 0;// 最大加速度点索引号
         MaxJsd = 0;// 最大加速度
-        try {
-            if (mJsdBuffer.size() > 0) {
-                mJsdList = new float[(mJsdBuffer.size() - 1) * 40];
-                mDrawList = new float[(mJsdBuffer.size() - 1) * 40];
-                mSdList = new float[mJsdList.length];
-                mDisList = new float[mJsdList.length];
-                for (int i = 1; i < mJsdBuffer.size(); i++) {
-                    for (int j = 15; j < 94; j += 2) {
+        if (mJsdBuffer.size() > 0) {
+            mJsdList = new float[(mJsdBuffer.size() - 1) * 40];
+            mDrawList = new float[(mJsdBuffer.size() - 1) * 40];
+            mSdList = new float[mJsdList.length];
+            mDisList = new float[mJsdList.length];
+            for (int i = 1; i < mJsdBuffer.size(); i++) {
+                for (int j = 15; j < 94; j += 2) {
+                    int hangel = mJsdBuffer.get(i)[j + 0];
+                    hangel = mJsdBuffer.get(i)[j + 0] & 0xff;
+                    int langel = mJsdBuffer.get(i)[j + 1];
+                    langel = mJsdBuffer.get(i)[j + 1] & 0xff;
 
-                        int hangel = mJsdBuffer.get(i)[j + 0];
-                        hangel = mJsdBuffer.get(i)[j + 0] & 0xff;
-                        int langel = mJsdBuffer.get(i)[j + 1];
-                        langel = mJsdBuffer.get(i)[j + 1] & 0xff;
-
-                        int tmp = (int) (hangel * 256 + langel);
-                        if (tmp > 32768) {
-                            tmp = tmp - 65535;
-                        }
-                        if (isDown) {
-                            mJsdList[mIndex] = (int) tmp / 10;
-                        } else {
-                            mJsdList[mIndex] = -(int) tmp / 10;
-                        }
-                        float mJsd = (mJsdList[mIndex]);
-
-                        if (mJsd < MaxJsd) {
-                            MaxIndex = mIndex;
-                            MaxJsd = mJsd;
-                        }
-                        if (mJsd > MinJsd) {
-
-                            MinJsd = mJsd;
-                        }
-
-
-                        mIndex++;
-
+                    int tmp = (int) (hangel * 256 + langel);
+                    if (tmp > 32768) {
+                        tmp = tmp - 65535;
                     }
+                    if (isDown) {//checkBox未选中，方向为下
+                        mJsdList[mIndex] = (int) tmp / 10;
+                    } else {//checkBox选中，方向为上
+                        mJsdList[mIndex] = -(int) tmp / 10;
+                    }
+                    float mJsd = (mJsdList[mIndex]);
+                    if (mJsd < MaxJsd) {
+                        MaxIndex = mIndex;
+                        MaxJsd = mJsd;
+                    }
+                    if (mJsd > MinJsd) {
+                        MinJsd = mJsd;
+                    }
+                    mIndex++;
                 }
             }
-
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
-
     }
 
     public float getmJsd() {
@@ -1270,4 +1183,164 @@ public class TestActivity extends AppCompatActivity {
     public void setDown(Boolean down) {
         isDown = down;
     }
+
+    public boolean isInit() {
+        return IsInit;
+    }
+
+    public void setInit(boolean init) {
+        IsInit = init;
+    }
+
+    public Boolean getTg() {
+        return IsTg;
+    }
+
+    public void setTg(Boolean tg) {
+        IsTg = tg;
+    }
+
+    public Boolean getBuzy() {
+        return IsBusy;
+    }
+
+    public void setBuzy(Boolean buzy) {
+        IsBusy = buzy;
+    }
+
+    public float[] getLengthList() {
+        return LengthList;
+    }
+
+    public void setLengthList(float[] lengthList) {
+        LengthList = lengthList;
+    }
+
+    public float[] getChangeList() {
+        return ChangeList;
+    }
+
+    public void setChangeList(float[] changeList) {
+        ChangeList = changeList;
+    }
+
+    public String[] getShowLength() {
+        return showLength;
+    }
+
+    public void setShowLength(String[] showLength) {
+        this.showLength = showLength;
+    }
+
+    public String[] getShowWy() {
+        return showWy;
+    }
+
+    public void setShowWy(String[] showWy) {
+        this.showWy = showWy;
+    }
+
+    public int getIndexXk1() {
+        return indexXk1;
+    }
+
+    public int getIndexXk2() {
+        return indexXk2;
+    }
+
+    public int getIndexXdzds1() {
+        return indexXdzds1;
+    }
+
+    public int getIndexXdzds2() {
+        return indexXdzds2;
+    }
+
+    public int getIndexXdhcs1() {
+        return indexXdhcs1;
+    }
+
+    public int getIndexXdhcs2() {
+        return indexXdhcs2;
+    }
+
+    public int getIndexXjgd() {
+        return indexXjgd;
+    }
+
+    public void setStart(Integer start) {
+        IsStart = start;
+    }
+
+    public int getJsdCount() {
+        return JsdCount;
+    }
+
+    public void setJsdCount(int jsdCount) {
+        JsdCount = jsdCount;
+    }
+
+    public float[] getLengthListTg() {
+        return LengthListTg;
+    }
+
+    public void setLengthListTg(float[] lengthListTg) {
+        LengthListTg = lengthListTg;
+    }
+
+    public float[] getPreListTg() {
+        return PreListTg;
+    }
+
+    public void setPreListTg(float[] preListTg) {
+        PreListTg = preListTg;
+    }
+
+    public float[] getChangeListTg() {
+        return ChangeListTg;
+    }
+
+    public void setChangeListTg(float[] changeListTg) {
+        ChangeListTg = changeListTg;
+    }
+
+    public String[] getShowLengthTg() {
+        return showLengthTg;
+    }
+
+    public void setShowLengthTg(String[] showLengthTg) {
+        this.showLengthTg = showLengthTg;
+    }
+
+    public String[] getShowWyTg() {
+        return showWyTg;
+    }
+
+    public void setShowWyTg(String[] showWyTg) {
+        this.showWyTg = showWyTg;
+    }
+
+    public void removeRunnable() {
+        if (handler != null) {
+            handler.removeCallbacks(runnable);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ComA.close();
+        removeRunnable();
+        //传感器是否连接全部置为false
+        MyApp.wy1Connected = false;
+        MyApp.wy2Connected = false;
+        MyApp.wy3Connected = false;
+        MyApp.wy4Connected = false;
+        MyApp.wy5Connected = false;
+        MyApp.wy6Connected = false;
+        MyApp.wy7Connected = false;
+        MyApp.jsdConnected = false;
+    }
+
+
 }

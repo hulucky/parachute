@@ -47,7 +47,8 @@ public class DataDetailActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         FrameLayout root = (FrameLayout) findViewById(R.id.root);
 
-        initData();  setSupportActionBar(toolbar);
+        initData();
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);  //决定左上角的图标是否可以点击
         mdatafragment = new DataFragment();
         mdatafragment.setDataManage(true);
