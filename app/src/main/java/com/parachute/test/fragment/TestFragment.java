@@ -166,85 +166,78 @@ public class TestFragment extends Fragment {
                 }
                 break;
             case R.id.btn_test_save://保存
-                if (flmain.getCurrentItem() == 1 ) {//静负荷测试
-                    if (MyApp.wy1Connected && MyApp.wy2Connected && MyApp.wy3Connected
-                            && MyApp.wy4Connected && MyApp.wy5Connected && MyApp.wy6Connected) {
-                        if (mActivity.isDown()) {//此时是停止状态
-                            btnTestSave.setEnabled(false);
-                            CountDownTimer timer = new CountDownTimer(3000 + 500, 1000) {
-                                @Override
-                                public void onTick(long millisUntilFinished) {
-                                    if (getActivity() != null && !getActivity().isFinishing()) {
-                                        btnTestSave.setEnabled(false);
-                                        btnTestSave.setText(String.valueOf(millisUntilFinished / 1000));
-                                    }
-                                }
+                if (flmain.getCurrentItem() == 1) {//静负荷测试
 
-                                @Override
-                                public void onFinish() {
-                                    //非空判断
-                                    if (getActivity() != null && !getActivity().isFinishing()) {
-                                        btnTestSave.setEnabled(true);
-                                        btnTestSave.setText("保存");
-                                    }
+                    if (mActivity.isDown()) {//此时是停止状态
+                        btnTestSave.setEnabled(false);
+                        CountDownTimer timer = new CountDownTimer(3000 + 500, 1000) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                if (getActivity() != null && !getActivity().isFinishing()) {
+                                    btnTestSave.setEnabled(false);
+                                    btnTestSave.setText(String.valueOf(millisUntilFinished / 1000));
                                 }
-                            }.start();
-                            mActivity.SaveData();
-                            mActivity.saveJfh();//清空记录的数据
-                            //mActivity.setStart(0);
-                            //mActivity.StartJsd();
-                            btnjfh.setEnabled(true);
-                            btntg.setEnabled(true);
-                            btnjsd.setEnabled(true);
-                            btnwy.setEnabled(true);
-                        } else if (mActivity.isStart()) {//此时是开始状态
-                            Toasty.info(mActivity, "测试进行中，需停止测试后再进行保存操作！").show();
-                        } else {//此时是保存状态
-                            Toasty.info(mActivity, "没有未保存数据！").show();
-                        }
-                    } else {
-                        Toasty.info(mActivity, "传感器未连接，无法保存！").show();
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                //非空判断
+                                if (getActivity() != null && !getActivity().isFinishing()) {
+                                    btnTestSave.setEnabled(true);
+                                    btnTestSave.setText("保存");
+                                }
+                            }
+                        }.start();
+                        mActivity.SaveData();
+                        mActivity.saveJfh();//清空记录的数据
+                        //mActivity.setStart(0);
+                        //mActivity.StartJsd();
+                        btnjfh.setEnabled(true);
+                        btntg.setEnabled(true);
+                        btnjsd.setEnabled(true);
+                        btnwy.setEnabled(true);
+                    } else if (mActivity.isStart()) {//此时是开始状态
+                        Toasty.info(mActivity, "测试进行中，需停止测试后再进行保存操作！").show();
+                    } else {//此时是保存状态
+                        Toasty.info(mActivity, "没有未保存数据！").show();
                     }
+
                 } else if (flmain.getCurrentItem() == 2 || flmain.getCurrentItem() == 3) {//脱钩测试
-                    if (MyApp.wy1Connected && MyApp.wy2Connected && MyApp.wy3Connected && MyApp.wy4Connected &&
-                            MyApp.wy5Connected && MyApp.wy6Connected && MyApp.wy7Connected && MyApp.jsdConnected) {
-                        if (mActivity.isDown()) {//此时是停止状态
-                            btnTestSave.setEnabled(false);
-                            CountDownTimer timer = new CountDownTimer(3000 + 500, 1000) {
-                                @Override
-                                public void onTick(long millisUntilFinished) {
-                                    if (getActivity() != null && !getActivity().isFinishing()) {
-                                        btnTestSave.setEnabled(false);
-                                        btnTestSave.setText(String.valueOf(millisUntilFinished / 1000));
-                                    }
+                    if (mActivity.isDown()) {//此时是停止状态
+                        btnTestSave.setEnabled(false);
+                        CountDownTimer timer = new CountDownTimer(3000 + 500, 1000) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                if (getActivity() != null && !getActivity().isFinishing()) {
+                                    btnTestSave.setEnabled(false);
+                                    btnTestSave.setText(String.valueOf(millisUntilFinished / 1000));
                                 }
+                            }
 
-                                @Override
-                                public void onFinish() {
-                                    //非空判断
-                                    if (getActivity() != null && !getActivity().isFinishing()) {
-                                        btnTestSave.setEnabled(true);
-                                        btnTestSave.setText("保存");
-                                    }
+                            @Override
+                            public void onFinish() {
+                                //非空判断
+                                if (getActivity() != null && !getActivity().isFinishing()) {
+                                    btnTestSave.setEnabled(true);
+                                    btnTestSave.setText("保存");
                                 }
-                            }.start();
-                            mActivity.SaveData();
-                            mActivity.saveTg();//清空记录的数据
-                            //mActivity.setStart(0);
+                            }
+                        }.start();
+                        mActivity.SaveData();
+                        mActivity.saveTg();//清空记录的数据
+                        //mActivity.setStart(0);
 //                                mActivity.StartJsd();
-                            btnjfh.setEnabled(true);
-                            btntg.setEnabled(true);
-                            btnjsd.setEnabled(true);
-                            btnwy.setEnabled(true);
-                        } else if (mActivity.isStart()) {//此时是开始状态
-                            Toasty.info(mActivity, "测试进行中，需停止测试后再进行保存操作！").show();
-                        } else {//此时是保存状态
-                            Toasty.info(mActivity, "没有未保存数据！").show();
-                        }
-                    } else {
-                        Toasty.info(mActivity, "传感器未连接，无法保存！").show();
+                        btnjfh.setEnabled(true);
+                        btntg.setEnabled(true);
+                        btnjsd.setEnabled(true);
+                        btnwy.setEnabled(true);
+                    } else if (mActivity.isStart()) {//此时是开始状态
+                        Toasty.info(mActivity, "测试进行中，需停止测试后再进行保存操作！").show();
+                    } else {//此时是保存状态
+                        Toasty.info(mActivity, "没有未保存数据！").show();
                     }
-                }else {
+
+                } else {
                     Toasty.info(mActivity, "请切换到对应界面进行保存！").show();
                 }
                 break;
@@ -252,30 +245,27 @@ public class TestFragment extends Fragment {
                 //先判断此时viewPager处于哪个fragment
                 //静负荷测试
                 if (flmain.getCurrentItem() == 1) {
-                    //如果传感器都连接了
-                    if (MyApp.wy1Connected && MyApp.wy2Connected && MyApp.wy3Connected
-                            && MyApp.wy4Connected && MyApp.wy5Connected && MyApp.wy6Connected) {
-                        if (mActivity.isDown()) {//如果停止了，那么可以开始（开始点击事件）
-                            Toasty.info(mActivity, "开始静负荷测试").show();
-                            mActivity.setTg(false);
-                            gifImageView.setBackgroundResource(R.drawable.jfh);
+                    if (mActivity.isDown()) {//如果停止了，那么可以开始（开始点击事件）
+                        Toasty.info(mActivity, "开始静负荷测试").show();
+                        mActivity.setTg(false);
+                        gifImageView.setBackgroundResource(R.drawable.jfh);
 //                            mActivity.saveJfh();//清空记录的数据
-                            btnStart.setText("停止");
-                            btntg.setEnabled(false);
-                            btnjsd.setEnabled(false);
-                            btnwy.setEnabled(false);
-                            btnStart.setBackgroundResource(R.mipmap.rightbar_btn_red);
-                            mActivity.setStart(1);//设置目前状态，1代表开始
-                            mActivity.startJfh();//把当前显示的距离作为初始值赋给位移
-                        } else {//停止测试(停止点击事件)
-                            Toasty.info(mActivity, "停止静负荷测试").show();
-                            mActivity.setStart(2);//2代表停止
-                            btntg.setEnabled(true);
-                            btnwy.setEnabled(true);
-                            btnjsd.setEnabled(true);
-                            btnStart.setText("开始");
-                            btnStart.setBackgroundResource(R.mipmap.rightbar_btn_blue);
-                        }
+                        btnStart.setText("停止");
+                        btntg.setEnabled(false);
+                        btnjsd.setEnabled(false);
+                        btnwy.setEnabled(false);
+                        btnStart.setBackgroundResource(R.mipmap.rightbar_btn_red);
+                        mActivity.setStart(1);//设置目前状态，1代表开始
+                        mActivity.startJfh();//把当前显示的距离作为初始值赋给位移
+                    } else {//停止测试(停止点击事件)
+                        Toasty.info(mActivity, "停止静负荷测试").show();
+                        mActivity.setStart(2);//2代表停止
+                        btntg.setEnabled(true);
+                        btnwy.setEnabled(true);
+                        btnjsd.setEnabled(true);
+                        btnStart.setText("开始");
+                        btnStart.setBackgroundResource(R.mipmap.rightbar_btn_blue);
+                    }
 //                    mActivity.StartJsd();
 //                    if (mActivity.getTg()) {
 //                        gifImageView.setBackgroundResource(R.drawable.tg);
@@ -289,8 +279,7 @@ public class TestFragment extends Fragment {
 //                        btnjsd.setEnabled(false);
 //                        btnwy.setEnabled(false);
 //                    }
-                    } else {
-                        Toast.makeText(getContext(), "传感器尚未连接，无法开始！", Toast.LENGTH_SHORT).show();
+
 //                    if (mActivity.isStart()) {
 //                        mActivity.drawrefresh();
 //                    }
@@ -305,32 +294,26 @@ public class TestFragment extends Fragment {
 //                    } else {
 //                        gifImageView.setBackgroundResource(R.drawable.jfhe);
 //                    }
-                    }
                     //加速度和位移测试(脱钩测试)
                 } else if (flmain.getCurrentItem() == 2 || flmain.getCurrentItem() == 3) {
-                    if (MyApp.wy1Connected && MyApp.wy2Connected && MyApp.wy3Connected && MyApp.wy4Connected
-                            && MyApp.wy5Connected && MyApp.wy6Connected && MyApp.wy7Connected && MyApp.jsdConnected) {
-                        if (mActivity.isDown()) {//开始点击事件
-                            Toasty.info(mActivity, "开始脱钩测试").show();
-                            mActivity.setTg(true);
-                            gifImageView.setBackgroundResource(R.drawable.tg);
-                            btnjfh.setEnabled(false);
-                            initTg();//初始化加速度界面
-                            mActivity.clearTg();//清空记录的数据
-                            mActivity.StartJsd();//发送开始测试指令
-                            btnStart.setText("停止");
-                            btnStart.setBackgroundResource(R.mipmap.rightbar_btn_red);
-                            mActivity.setStart(1);
-                            mActivity.startTg();//把当前显示的距离作为初始值赋给位移
-                        } else {//停止点击事件
-                            Toasty.info(mActivity, "停止脱钩测试").show();
-                            btnjfh.setEnabled(true);
-                            mActivity.setStart(2);
-                            btnStart.setText("开始");
-                            btnStart.setBackgroundResource(R.mipmap.rightbar_btn_blue);
-                        }
-                    } else {
-                        Toast.makeText(getContext(), "传感器尚未连接，无法开始！", Toast.LENGTH_SHORT).show();
+                    if (mActivity.isDown()) {//开始点击事件
+                        Toasty.info(mActivity, "开始脱钩测试").show();
+                        mActivity.setTg(true);
+                        gifImageView.setBackgroundResource(R.drawable.tg);
+                        btnjfh.setEnabled(false);
+                        initTg();//初始化加速度界面
+                        mActivity.clearTg();//清空记录的数据
+                        mActivity.StartJsd();//发送开始测试指令
+                        btnStart.setText("停止");
+                        btnStart.setBackgroundResource(R.mipmap.rightbar_btn_red);
+                        mActivity.setStart(1);
+                        mActivity.startTg();//把当前显示的距离作为初始值赋给位移
+                    } else {//停止点击事件
+                        Toasty.info(mActivity, "停止脱钩测试").show();
+                        btnjfh.setEnabled(true);
+                        mActivity.setStart(2);
+                        btnStart.setText("开始");
+                        btnStart.setBackgroundResource(R.mipmap.rightbar_btn_blue);
                     }
                 } else {//在传感器界面不能开始测试
                     Toast.makeText(getContext(), "请切换到对应的测试界面进行测试！", Toast.LENGTH_SHORT).show();

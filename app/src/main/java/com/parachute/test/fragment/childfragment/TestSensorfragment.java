@@ -87,51 +87,51 @@ public class TestSensorfragment extends Fragment {
                 switch (view.getId()){
                     case R.id.wy_test_1:
                         MyApp.wy1Connected = false;
-                        Log.d("ooo", "位移1中断: ");
-                        Toast.makeText(getContext(), "位移1中断！", Toast.LENGTH_SHORT).show();
+                        Log.d("ooo", "楔块1中断: ");
+                        Toast.makeText(getContext(), "楔块传感器1中断！", Toast.LENGTH_SHORT).show();
                         mActivity.setStart(2);
                         mActivity.refreshNullData();
                         break;
                     case R.id.wy_test_2:
                         MyApp.wy2Connected = false;
-                        Toast.makeText(getContext(), "位移2中断！", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "楔块传感器2中断！", Toast.LENGTH_SHORT).show();
                         mActivity.setStart(2);
                         mActivity.refreshNullData();
                         break;
                     case R.id.wy_test_3:
                         MyApp.wy3Connected = false;
-                        Toast.makeText(getContext(), "位移3中断！", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "制动传感器1中断！", Toast.LENGTH_SHORT).show();
                         mActivity.setStart(2);
                         mActivity.refreshNullData();
                         break;
                     case R.id.wy_test_4:
                         MyApp.wy4Connected = false;
-                        Toast.makeText(getContext(), "位移4中断！", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "制动传感器2中断！", Toast.LENGTH_SHORT).show();
                         mActivity.setStart(2);
                         mActivity.refreshNullData();
                         break;
                     case R.id.wy_test_5:
                         MyApp.wy5Connected = false;
-                        Toast.makeText(getContext(), "位移5中断！", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "缓冲传感器1中断！", Toast.LENGTH_SHORT).show();
                         mActivity.setStart(2);
                         mActivity.refreshNullData();
                         break;
                     case R.id.wy_test_6:
                         MyApp.wy6Connected = false;
-                        Toast.makeText(getContext(), "位移6中断！", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "缓冲传感器2中断！", Toast.LENGTH_SHORT).show();
                         mActivity.setStart(2);
                         mActivity.refreshNullData();
                         break;
                     case R.id.wy_test_7:
                         MyApp.wy7Connected = false;
-                        Toast.makeText(getContext(), "位移7中断！", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "下降传感器中断！", Toast.LENGTH_SHORT).show();
                         mActivity.setStart(2);
                         mActivity.refreshNullData();
                         break;
                     case R.id.jsd_test:
-                        Log.d("ooo", "加速度中断: ");
+                        Log.d("ooo", "加速度传感器中断: ");
                         MyApp.jsdConnected = false;
-                        Toast.makeText(getContext(), "加速度中断！", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "加速度传感器中断！", Toast.LENGTH_SHORT).show();
                         mActivity.setStart(2);
                         mActivity.refreshNullData();
                         mActivity.refreshJsdNull();

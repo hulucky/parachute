@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao' // apply plugin
+//定义得到当前日期的函数：
+def releaseTime() {
+    return new Date().format("yyyyMMdd", TimeZone.getTimeZone("UTC"))
+}
 
 android {
     compileSdkVersion 27
@@ -8,7 +12,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 27
         versionCode 1 // Apk版本号 ：正整数，且新APK必须大于旧版APK才可以覆盖安装。
-        versionName "V2.19.04.10.0001" //APK版本名称：V2.18.08.23.0001 ，用于区分APK的版本。
+        versionName "V3.190917.01" //APK版本名称：V2.18.08.23.0001 ，用于区分APK的版本。
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         ndk {
@@ -28,6 +32,13 @@ android {
             jni.srcDirs = []
 
         }
+    }
+}
+
+//在apk文件后边生成版本号信息
+android.applicationVariants.all { variant ->
+    variant.outputs.all {
+        outputFileName = "CZD13W矿用防坠器无线多参数测试仪-${variant.name}-${variant.versionName}-${releaseTime()}.apk"
     }
 }
 

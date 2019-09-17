@@ -110,7 +110,7 @@ public class TestActivity extends AppCompatActivity {
     private float MaxJsd;
     private float MinJsd;
     float ExZero = 0.5f;
-    float stG = 9.8f;
+    float stG = 9.8f;//重力加速度
     float JsdRange = 1f;
     int AvePreCount = 50;
 
@@ -199,9 +199,9 @@ public class TestActivity extends AppCompatActivity {
                 });
             }
         }).start();
-        //0 wait 保存以后
-        // 1 work 开始以后
-        // 2 done 停止以后
+        //0 wait 保存后
+        // 1 work 开始后
+        // 2 done 停止后
         IsStart = 2;//默认是停止状态
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -224,20 +224,20 @@ public class TestActivity extends AppCompatActivity {
 
 
     private void initSenserIndex() {//初始化传感器位置
-        indexXk1 = 1;//楔块1
-        indexXk2 = 2;//楔块2
-        indexXdzds1 = 3;//相对制动绳1
-        indexXdzds2 = 4;//相对制动绳2
-        indexXdhcs1 = 5;//相对缓冲绳1
-        indexXdhcs2 = 6;//相对缓冲绳2
-        indexXjgd = 7;//下降高度
+        indexXk1 = 0;//楔块1
+        indexXk2 = 1;//楔块2
+        indexXdzds1 = 2;//相对制动绳1
+        indexXdzds2 = 3;//相对制动绳2
+        indexXdhcs1 = 4;//相对缓冲绳1
+        indexXdhcs2 = 5;//相对缓冲绳2
+        indexXjgd = 6;//下降高度
         indexWd = 0;
         indexJsd = 0;//加速度
     }
 
-    //0 wait 保存以后，（开始之前）
-    // 1 work 开始以后，（停止之前）
-    // 2 done 停止以后，（保存以前）
+    //0 wait 保存后，（开始前）
+    // 1 work 开始后，（停止前）
+    // 2 done 停止后，（保存前）
     public boolean isStart() {
         if (IsStart == 1) {
             return true;
@@ -406,98 +406,284 @@ public class TestActivity extends AppCompatActivity {
     }
 
 
-    //onCreat方法里面调用，0.5秒钟更新一次
+    //onCreat方法里面调用，1秒钟更新一次
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
             if (!IsTg) {//如果此时是静负荷测试
-                //如果6个传感器都连上了
-                if (MyApp.wy1Connected && MyApp.wy2Connected && MyApp.wy3Connected && MyApp.wy4Connected && MyApp.wy5Connected && MyApp.wy6Connected) {
-                    //if (shuaXin) {
-                    //同时解析6个传感器的数据
-                    byte[] buffer0 = new byte[8];//每个传感器数据长度是8
-                    byte[] buffer1 = new byte[8];//每个传感器数据长度是8
-                    byte[] buffer2 = new byte[8];//每个传感器数据长度是8
-                    byte[] buffer3 = new byte[8];//每个传感器数据长度是8
-                    byte[] buffer4 = new byte[8];//每个传感器数据长度是8
-                    byte[] buffer5 = new byte[8];//每个传感器数据长度是8
-                    //解析6个位移传感器包（comBean在MyApp中静态保存）
-                    parserRecData(buffer0, buffer1, buffer2, buffer3, buffer4, buffer5);
-                    //6个距离(注意：得到的数据第一位是 ： ，所以不取，从第二位开始取)
+                //同时解析6个传感器的数据
+                byte[] buffer0 = new byte[8];//每个传感器数据长度是8
+                byte[] buffer1 = new byte[8];//每个传感器数据长度是8
+                byte[] buffer2 = new byte[8];//每个传感器数据长度是8
+                byte[] buffer3 = new byte[8];//每个传感器数据长度是8
+                byte[] buffer4 = new byte[8];//每个传感器数据长度是8
+                byte[] buffer5 = new byte[8];//每个传感器数据长度是8
+                //解析6个位移传感器包（comBean在MyApp中静态保存）
+                parserRecData(buffer0, buffer1, buffer2, buffer3, buffer4, buffer5);
+                //6个距离(注意：得到的数据第一位是 ： ，所以不取，从第二位开始取)
+                if (MyApp.wy1Connected) {
                     String length0 = new String(buffer0, 1, 7, Charset.forName("ASCII"));
-                    String length1 = new String(buffer1, 1, 7, Charset.forName("ASCII"));
-                    String length2 = new String(buffer2, 1, 7, Charset.forName("ASCII"));
-                    String length3 = new String(buffer3, 1, 7, Charset.forName("ASCII"));
-                    String length4 = new String(buffer4, 1, 7, Charset.forName("ASCII"));
-                    String length5 = new String(buffer5, 1, 7, Charset.forName("ASCII"));
-                    Log.i("jkj", "run: " + Arrays.toString(buffer0) + "\n" + Arrays.toString(buffer1) + "\n" + Arrays.toString(buffer2) + "\n" +
-                            Arrays.toString(buffer3) + "\n" + Arrays.toString(buffer4) + "\n" + Arrays.toString(buffer5) + "\n");
-                    Log.i("jkj", "run: " + length0 + "\n" + length1 + "\n" + length2 + "\n" + length3 + "\n" + length4 + "\n" + length5);
-                    LengthList[0] = Float.parseFloat(length0) * 1000 + (float) (Math.random() - 0.5) / 10;
-                    LengthList[1] = Float.parseFloat(length1) * 1000 + (float) (Math.random() - 0.5) / 10;
-                    LengthList[2] = Float.parseFloat(length2) * 1000 + (float) (Math.random() - 0.5) / 10;
-                    LengthList[3] = Float.parseFloat(length3) * 1000 + (float) (Math.random() - 0.5) / 10;
-                    LengthList[4] = Float.parseFloat(length4) * 1000 + (float) (Math.random() - 0.5) / 10;
-                    LengthList[5] = Float.parseFloat(length5) * 1000 + (float) (Math.random() - 0.5) / 10;
-                    //判断此时如果处于开始后，停止前，那么 位移（改变的距离） = 显示的距离 - 之前的距离
-                    //如果此时处于停止后，那么位移应该不变，不被赋值就行了
-                    if (IsStart == 1) {//开始后
-                        for (int i = 0; i < 6; i++) {//6个传感器
-                            ChangeList[i] = Math.abs(LengthList[i] - PreList[i]);
-                        }
+                    if (!"".equals(length0)) {
+                        LengthList[0] = Float.parseFloat(length0) * 1000 + (float) (Math.random() - 0.5) / 10;
                     }
-                    for (int i = 0; i < 6; i++) {
-                        //showLength--当前距离，送显
-                        showLength[i] = df2.format(LengthList[i]) + "mm";// LengthList--当前距离
-                        //showWy--位移差，送显
-                        showWy[i] = df2.format(ChangeList[i]) + "mm";// ChangeList--位移距离，保存用
-                    }
-                    refresh();//更新显示数据
                 }
+                if (MyApp.wy2Connected) {
+                    String length1 = new String(buffer1, 1, 7, Charset.forName("ASCII"));
+                    if (!"".equals(length1)) {
+                        LengthList[1] = Float.parseFloat(length1) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    }
+                }
+                if (MyApp.wy3Connected) {
+                    String length2 = new String(buffer2, 1, 7, Charset.forName("ASCII"));
+                    if (!"".equals(length2)) {
+                        LengthList[2] = Float.parseFloat(length2) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    }
+                }
+                if (MyApp.wy4Connected) {
+                    String length3 = new String(buffer3, 1, 7, Charset.forName("ASCII"));
+                    if (!"".equals(length3)) {
+                        LengthList[3] = Float.parseFloat(length3) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    }
+                }
+                if (MyApp.wy5Connected) {
+                    String length4 = new String(buffer4, 1, 7, Charset.forName("ASCII"));
+                    if (!"".equals(length4)) {
+                        LengthList[4] = Float.parseFloat(length4) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    }
+                }
+                if (MyApp.wy6Connected) {
+                    String length5 = new String(buffer5, 1, 7, Charset.forName("ASCII"));
+                    if (!"".equals(length5)) {
+                        LengthList[5] = Float.parseFloat(length5) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    }
+                }
+                Log.i("jkj", "run: " + Arrays.toString(buffer0) + "\n" + Arrays.toString(buffer1) + "\n" + Arrays.toString(buffer2) + "\n" +
+                        Arrays.toString(buffer3) + "\n" + Arrays.toString(buffer4) + "\n" + Arrays.toString(buffer5) + "\n");
+//                Log.i("jkj", "run: " + length0 + "\n" + length1 + "\n" + length2 + "\n" + length3 + "\n" + length4 + "\n" + length5);
+                //判断此时如果处于开始后，停止前，那么 位移（改变的距离） = 显示的距离 - 之前的距离
+                //如果此时处于停止后，那么位移应该不变，不被赋值就行了
+                if (IsStart == 1) {//开始后
+                    if (MyApp.wy1Connected) {
+                        ChangeList[0] = Math.abs(LengthList[0] - PreList[0]);
+                    }
+                    if (MyApp.wy2Connected) {
+                        ChangeList[1] = Math.abs(LengthList[1] - PreList[1]);
+                    }
+                    if (MyApp.wy3Connected) {
+                        ChangeList[2] = Math.abs(LengthList[2] - PreList[2]);
+                    }
+                    if (MyApp.wy4Connected) {
+                        ChangeList[3] = Math.abs(LengthList[3] - PreList[3]);
+                    }
+                    if (MyApp.wy5Connected) {
+                        ChangeList[4] = Math.abs(LengthList[4] - PreList[4]);
+                    }
+                    if (MyApp.wy6Connected) {
+                        ChangeList[5] = Math.abs(LengthList[5] - PreList[5]);
+                    }
+                }
+                //显示数据
+                if (MyApp.wy1Connected) {
+                    //showLength--当前距离，送显
+                    showLength[0] = df2.format(LengthList[0]) + "mm";// LengthList--当前距离
+                    //showWy--位移差，送显
+                    showWy[0] = df2.format(ChangeList[0]) + "mm";// ChangeList--位移距离，保存用
+                } else {
+                    showLength[0] = "--";
+                    showWy[0] = "--";
+                }
+                if (MyApp.wy2Connected) {
+                    //showLength--当前距离，送显
+                    showLength[1] = df2.format(LengthList[1]) + "mm";// LengthList--当前距离
+                    //showWy--位移差，送显
+                    showWy[1] = df2.format(ChangeList[1]) + "mm";// ChangeList--位移距离，保存用
+                } else {
+                    showLength[1] = "--";
+                    showWy[1] = "--";
+                }
+                if (MyApp.wy3Connected) {
+                    //showLength--当前距离，送显
+                    showLength[2] = df2.format(LengthList[2]) + "mm";// LengthList--当前距离
+                    //showWy--位移差，送显
+                    showWy[2] = df2.format(ChangeList[2]) + "mm";// ChangeList--位移距离，保存用
+                } else {
+                    showLength[2] = "--";
+                    showWy[2] = "--";
+                }
+                if (MyApp.wy4Connected) {
+                    //showLength--当前距离，送显
+                    showLength[3] = df2.format(LengthList[3]) + "mm";// LengthList--当前距离
+                    //showWy--位移差，送显
+                    showWy[3] = df2.format(ChangeList[3]) + "mm";// ChangeList--位移距离，保存用
+                } else {
+                    showLength[3] = "--";
+                    showWy[3] = "--";
+                }
+                if (MyApp.wy5Connected) {
+                    //showLength--当前距离，送显
+                    showLength[4] = df2.format(LengthList[4]) + "mm";// LengthList--当前距离
+                    //showWy--位移差，送显
+                    showWy[4] = df2.format(ChangeList[4]) + "mm";// ChangeList--位移距离，保存用
+                } else {
+                    showLength[4] = "--";
+                    showWy[4] = "--";
+                }
+                if (MyApp.wy6Connected) {
+                    //showLength--当前距离，送显
+                    showLength[5] = df2.format(LengthList[5]) + "mm";// LengthList--当前距离
+                    //showWy--位移差，送显
+                    showWy[5] = df2.format(ChangeList[5]) + "mm";// ChangeList--位移距离，保存用
+                } else {
+                    showLength[5] = "--";
+                    showWy[5] = "--";
+                }
+                refresh();//更新显示数据
             } else {//如果此时是脱钩测试
-                if (MyApp.wy1Connected && MyApp.wy2Connected && MyApp.wy3Connected && MyApp.wy4Connected
-                        && MyApp.wy5Connected && MyApp.wy6Connected && MyApp.wy7Connected && MyApp.jsdConnected) {
-                    //同时解析七个位移传感器的数据
-                    byte[] buffer0 = new byte[8];//每个传感器数据长度是8
-                    byte[] buffer1 = new byte[8];//每个传感器数据长度是8
-                    byte[] buffer2 = new byte[8];//每个传感器数据长度是8
-                    byte[] buffer3 = new byte[8];//每个传感器数据长度是8
-                    byte[] buffer4 = new byte[8];//每个传感器数据长度是8
-                    byte[] buffer5 = new byte[8];//每个传感器数据长度是8
-                    byte[] buffer6 = new byte[8];//每个传感器数据长度是8
-                    //解析七个位移传感器包（comBean在MyApp中静态保存）
-                    parserRecDataTg(buffer0, buffer1, buffer2, buffer3, buffer4, buffer5, buffer6);
+                //同时解析七个位移传感器的数据
+                byte[] buffer0 = new byte[8];//每个传感器数据长度是8
+                byte[] buffer1 = new byte[8];//每个传感器数据长度是8
+                byte[] buffer2 = new byte[8];//每个传感器数据长度是8
+                byte[] buffer3 = new byte[8];//每个传感器数据长度是8
+                byte[] buffer4 = new byte[8];//每个传感器数据长度是8
+                byte[] buffer5 = new byte[8];//每个传感器数据长度是8
+                byte[] buffer6 = new byte[8];//每个传感器数据长度是8
+                //解析七个位移传感器包（comBean在MyApp中静态保存）
+                parserRecDataTg(buffer0, buffer1, buffer2, buffer3, buffer4, buffer5, buffer6);
+                if (MyApp.wy1Connected) {
                     //七个距离(注意：得到的数据第一位是 ： ，所以不取，从第二位开始取)
                     String length0 = new String(buffer0, 1, 7, Charset.forName("ASCII"));
-                    String length1 = new String(buffer1, 1, 7, Charset.forName("ASCII"));
-                    String length2 = new String(buffer2, 1, 7, Charset.forName("ASCII"));
-                    String length3 = new String(buffer3, 1, 7, Charset.forName("ASCII"));
-                    String length4 = new String(buffer4, 1, 7, Charset.forName("ASCII"));
-                    String length5 = new String(buffer5, 1, 7, Charset.forName("ASCII"));
-                    String length6 = new String(buffer6, 1, 7, Charset.forName("ASCII"));
                     //七个位移传感器的数据
-                    LengthListTg[0] = Float.parseFloat(length0) * 1000 + (float) (Math.random() - 0.5) / 10;
-                    LengthListTg[1] = Float.parseFloat(length1) * 1000 + (float) (Math.random() - 0.5) / 10;
-                    LengthListTg[2] = Float.parseFloat(length2) * 1000 + (float) (Math.random() - 0.5) / 10;
-                    LengthListTg[3] = Float.parseFloat(length3) * 1000 + (float) (Math.random() - 0.5) / 10;
-                    LengthListTg[4] = Float.parseFloat(length4) * 1000 + (float) (Math.random() - 0.5) / 10;
-                    LengthListTg[5] = Float.parseFloat(length5) * 1000 + (float) (Math.random() - 0.5) / 10;
-                    LengthListTg[6] = Float.parseFloat(length6) * 1000 + (float) (Math.random() - 0.5) / 10;
-                    //判断此时如果处于开始后，停止前，那么 位移（改变的距离） = 显示的距离 - 之前的距离
-                    //如果此时处于停止后，那么位移应该不变，不被赋值就行了
-                    if (IsStart == 1) {//开始后
-                        for (int i = 0; i < 7; i++) {//七个传感器
-                            ChangeListTg[i] = Math.abs(LengthListTg[i] - PreListTg[i]);
-                        }
+                    if (!"".equals(length0)) {
+                        LengthListTg[0] = Float.parseFloat(length0) * 1000 + (float) (Math.random() - 0.5) / 10;
                     }
-                    for (int i = 0; i < 7; i++) {
-                        //showLength--当前距离，送显
-                        showLengthTg[i] = df2.format(LengthListTg[i]) + "mm";// LengthList--当前距离
-                        //showWy--位移差，送显
-                        showWyTg[i] = df2.format(ChangeListTg[i]) + "mm";// ChangeList--位移距离，保存用
-                    }
-                    refresh();//更新显示数据
                 }
+                if (MyApp.wy2Connected) {
+                    String length1 = new String(buffer1, 1, 7, Charset.forName("ASCII"));
+                    if (!"".equals(length1)) {
+                        LengthListTg[1] = Float.parseFloat(length1) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    }
+                }
+                if (MyApp.wy3Connected) {
+                    String length2 = new String(buffer2, 1, 7, Charset.forName("ASCII"));
+                    if (!"".equals(length2)) {
+                        LengthListTg[2] = Float.parseFloat(length2) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    }
+                }
+                if (MyApp.wy4Connected) {
+                    String length3 = new String(buffer3, 1, 7, Charset.forName("ASCII"));
+                    if (!"".equals(length3)) {
+                        LengthListTg[3] = Float.parseFloat(length3) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    }
+                }
+                if (MyApp.wy5Connected) {
+                    String length4 = new String(buffer4, 1, 7, Charset.forName("ASCII"));
+                    if (!"".equals(length4)) {
+                        LengthListTg[4] = Float.parseFloat(length4) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    }
+                }
+                if (MyApp.wy6Connected) {
+                    String length5 = new String(buffer5, 1, 7, Charset.forName("ASCII"));
+                    if (!"".equals(length5)) {
+                        LengthListTg[5] = Float.parseFloat(length5) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    }
+                }
+                if (MyApp.wy7Connected) {
+                    String length6 = new String(buffer6, 1, 7, Charset.forName("ASCII"));
+                    if (!"".equals(length6)) {
+                        LengthListTg[6] = Float.parseFloat(length6) * 1000 + (float) (Math.random() - 0.5) / 10;
+                    }
+                }
+                //判断此时如果处于开始后，停止前，那么 位移（改变的距离） = 显示的距离 - 之前的距离
+                //如果此时处于停止后，那么位移应该不变，不被赋值就行了
+                if (IsStart == 1) {//开始后
+                    //七个传感器
+                    if (MyApp.wy1Connected) {
+                        ChangeListTg[0] = Math.abs(LengthListTg[0] - PreListTg[0]);
+                    }
+                    if (MyApp.wy2Connected) {
+                        ChangeListTg[1] = Math.abs(LengthListTg[1] - PreListTg[1]);
+                    }
+                    if (MyApp.wy3Connected) {
+                        ChangeListTg[2] = Math.abs(LengthListTg[2] - PreListTg[2]);
+                    }
+                    if (MyApp.wy4Connected) {
+                        ChangeListTg[3] = Math.abs(LengthListTg[3] - PreListTg[3]);
+                    }
+                    if (MyApp.wy5Connected) {
+                        ChangeListTg[4] = Math.abs(LengthListTg[4] - PreListTg[4]);
+                    }
+                    if (MyApp.wy6Connected) {
+                        ChangeListTg[5] = Math.abs(LengthListTg[5] - PreListTg[5]);
+                    }
+                    if (MyApp.wy7Connected) {
+                        ChangeListTg[6] = Math.abs(LengthListTg[6] - PreListTg[6]);
+                    }
+                }
+                //显示数据
+                if (MyApp.wy1Connected) {
+                    //showLength--当前距离，送显
+                    showLengthTg[0] = df2.format(LengthListTg[0]) + "mm";// LengthList--当前距离
+                    //showWy--位移差，送显
+                    showWyTg[0] = df2.format(ChangeListTg[0]) + "mm";// ChangeList--位移距离，保存用
+                } else {
+                    showLengthTg[0] = "--";
+                    showWyTg[0] = "--";
+                }
+                if (MyApp.wy2Connected) {
+                    //showLength--当前距离，送显
+                    showLengthTg[1] = df2.format(LengthListTg[1]) + "mm";// LengthList--当前距离
+                    //showWy--位移差，送显
+                    showWyTg[1] = df2.format(ChangeListTg[1]) + "mm";// ChangeList--位移距离，保存用
+                } else {
+                    showLengthTg[1] = "--";
+                    showWyTg[1] = "--";
+                }
+                if (MyApp.wy3Connected) {
+                    //showLength--当前距离，送显
+                    showLengthTg[2] = df2.format(LengthListTg[2]) + "mm";// LengthList--当前距离
+                    //showWy--位移差，送显
+                    showWyTg[2] = df2.format(ChangeListTg[2]) + "mm";// ChangeList--位移距离，保存用
+                } else {
+                    showLengthTg[2] = "--";
+                    showWyTg[2] = "--";
+                }
+                if (MyApp.wy4Connected) {
+                    //showLength--当前距离，送显
+                    showLengthTg[3] = df2.format(LengthListTg[3]) + "mm";// LengthList--当前距离
+                    //showWy--位移差，送显
+                    showWyTg[3] = df2.format(ChangeListTg[3]) + "mm";// ChangeList--位移距离，保存用
+                } else {
+                    showLengthTg[3] = "--";
+                    showWyTg[3] = "--";
+                }
+                if (MyApp.wy5Connected) {
+                    //showLength--当前距离，送显
+                    showLengthTg[4] = df2.format(LengthListTg[4]) + "mm";// LengthList--当前距离
+                    //showWy--位移差，送显
+                    showWyTg[4] = df2.format(ChangeListTg[4]) + "mm";// ChangeList--位移距离，保存用
+                } else {
+                    showLengthTg[4] = "--";
+                    showWyTg[4] = "--";
+                }
+                if (MyApp.wy6Connected) {
+                    //showLength--当前距离，送显
+                    showLengthTg[5] = df2.format(LengthListTg[5]) + "mm";// LengthList--当前距离
+                    //showWy--位移差，送显
+                    showWyTg[5] = df2.format(ChangeListTg[5]) + "mm";// ChangeList--位移距离，保存用
+                } else {
+                    showLengthTg[5] = "--";
+                    showWyTg[5] = "--";
+                }
+                if (MyApp.wy7Connected) {
+                    //showLength--当前距离，送显
+                    showLengthTg[6] = df2.format(LengthListTg[6]) + "mm";// LengthList--当前距离
+                    //showWy--位移差，送显
+                    showWyTg[6] = df2.format(ChangeListTg[6]) + "mm";// ChangeList--位移距离，保存用
+                } else {
+                    showLengthTg[6] = "--";
+                    showWyTg[6] = "--";
+                }
+                refresh();//更新显示数据
             }
             handler.postDelayed(this, 1000);
         }
@@ -505,125 +691,150 @@ public class TestActivity extends AppCompatActivity {
 
     //解析6个位移传感器包
     public void parserRecData(byte[] buffer1, byte[] buffer2, byte[] buffer3, byte[] buffer4, byte[] buffer5, byte[] buffer6) {
-        buffer1[0] = MyApp.comBeanWy1.recData[14];
-        buffer1[1] = MyApp.comBeanWy1.recData[15];
-        buffer1[2] = MyApp.comBeanWy1.recData[16];
-        buffer1[3] = MyApp.comBeanWy1.recData[17];
-        buffer1[4] = MyApp.comBeanWy1.recData[18];
-        buffer1[5] = MyApp.comBeanWy1.recData[19];
-        buffer1[6] = MyApp.comBeanWy1.recData[20];
-        buffer1[7] = MyApp.comBeanWy1.recData[21];
+        if (MyApp.wy1Connected) {
+            buffer1[0] = MyApp.comBeanWy1.recData[14];
+            buffer1[1] = MyApp.comBeanWy1.recData[15];
+            buffer1[2] = MyApp.comBeanWy1.recData[16];
+            buffer1[3] = MyApp.comBeanWy1.recData[17];
+            buffer1[4] = MyApp.comBeanWy1.recData[18];
+            buffer1[5] = MyApp.comBeanWy1.recData[19];
+            buffer1[6] = MyApp.comBeanWy1.recData[20];
+            buffer1[7] = MyApp.comBeanWy1.recData[21];
+        }
 
-        buffer2[0] = MyApp.comBeanWy2.recData[14];
-        buffer2[1] = MyApp.comBeanWy2.recData[15];
-        buffer2[2] = MyApp.comBeanWy2.recData[16];
-        buffer2[3] = MyApp.comBeanWy2.recData[17];
-        buffer2[4] = MyApp.comBeanWy2.recData[18];
-        buffer2[5] = MyApp.comBeanWy2.recData[19];
-        buffer2[6] = MyApp.comBeanWy2.recData[20];
-        buffer2[7] = MyApp.comBeanWy2.recData[21];
+        if (MyApp.wy2Connected) {
+            buffer2[0] = MyApp.comBeanWy2.recData[14];
+            buffer2[1] = MyApp.comBeanWy2.recData[15];
+            buffer2[2] = MyApp.comBeanWy2.recData[16];
+            buffer2[3] = MyApp.comBeanWy2.recData[17];
+            buffer2[4] = MyApp.comBeanWy2.recData[18];
+            buffer2[5] = MyApp.comBeanWy2.recData[19];
+            buffer2[6] = MyApp.comBeanWy2.recData[20];
+            buffer2[7] = MyApp.comBeanWy2.recData[21];
+        }
+        if (MyApp.wy3Connected) {
+            buffer3[0] = MyApp.comBeanWy3.recData[14];
+            buffer3[1] = MyApp.comBeanWy3.recData[15];
+            buffer3[2] = MyApp.comBeanWy3.recData[16];
+            buffer3[3] = MyApp.comBeanWy3.recData[17];
+            buffer3[4] = MyApp.comBeanWy3.recData[18];
+            buffer3[5] = MyApp.comBeanWy3.recData[19];
+            buffer3[6] = MyApp.comBeanWy3.recData[20];
+            buffer3[7] = MyApp.comBeanWy3.recData[21];
+        }
 
-        buffer3[0] = MyApp.comBeanWy3.recData[14];
-        buffer3[1] = MyApp.comBeanWy3.recData[15];
-        buffer3[2] = MyApp.comBeanWy3.recData[16];
-        buffer3[3] = MyApp.comBeanWy3.recData[17];
-        buffer3[4] = MyApp.comBeanWy3.recData[18];
-        buffer3[5] = MyApp.comBeanWy3.recData[19];
-        buffer3[6] = MyApp.comBeanWy3.recData[20];
-        buffer3[7] = MyApp.comBeanWy3.recData[21];
+        if (MyApp.wy4Connected) {
+            buffer4[0] = MyApp.comBeanWy4.recData[14];
+            buffer4[1] = MyApp.comBeanWy4.recData[15];
+            buffer4[2] = MyApp.comBeanWy4.recData[16];
+            buffer4[3] = MyApp.comBeanWy4.recData[17];
+            buffer4[4] = MyApp.comBeanWy4.recData[18];
+            buffer4[5] = MyApp.comBeanWy4.recData[19];
+            buffer4[6] = MyApp.comBeanWy4.recData[20];
+            buffer4[7] = MyApp.comBeanWy4.recData[21];
+        }
 
-        buffer4[0] = MyApp.comBeanWy4.recData[14];
-        buffer4[1] = MyApp.comBeanWy4.recData[15];
-        buffer4[2] = MyApp.comBeanWy4.recData[16];
-        buffer4[3] = MyApp.comBeanWy4.recData[17];
-        buffer4[4] = MyApp.comBeanWy4.recData[18];
-        buffer4[5] = MyApp.comBeanWy4.recData[19];
-        buffer4[6] = MyApp.comBeanWy4.recData[20];
-        buffer4[7] = MyApp.comBeanWy4.recData[21];
+        if (MyApp.wy5Connected) {
+            buffer5[0] = MyApp.comBeanWy5.recData[14];
+            buffer5[1] = MyApp.comBeanWy5.recData[15];
+            buffer5[2] = MyApp.comBeanWy5.recData[16];
+            buffer5[3] = MyApp.comBeanWy5.recData[17];
+            buffer5[4] = MyApp.comBeanWy5.recData[18];
+            buffer5[5] = MyApp.comBeanWy5.recData[19];
+            buffer5[6] = MyApp.comBeanWy5.recData[20];
+            buffer5[7] = MyApp.comBeanWy5.recData[21];
+        }
 
-        buffer5[0] = MyApp.comBeanWy5.recData[14];
-        buffer5[1] = MyApp.comBeanWy5.recData[15];
-        buffer5[2] = MyApp.comBeanWy5.recData[16];
-        buffer5[3] = MyApp.comBeanWy5.recData[17];
-        buffer5[4] = MyApp.comBeanWy5.recData[18];
-        buffer5[5] = MyApp.comBeanWy5.recData[19];
-        buffer5[6] = MyApp.comBeanWy5.recData[20];
-        buffer5[7] = MyApp.comBeanWy5.recData[21];
-
-        buffer6[0] = MyApp.comBeanWy6.recData[14];
-        buffer6[1] = MyApp.comBeanWy6.recData[15];
-        buffer6[2] = MyApp.comBeanWy6.recData[16];
-        buffer6[3] = MyApp.comBeanWy6.recData[17];
-        buffer6[4] = MyApp.comBeanWy6.recData[18];
-        buffer6[5] = MyApp.comBeanWy6.recData[19];
-        buffer6[6] = MyApp.comBeanWy6.recData[20];
-        buffer6[7] = MyApp.comBeanWy6.recData[21];
+        if (MyApp.wy6Connected) {
+            buffer6[0] = MyApp.comBeanWy6.recData[14];
+            buffer6[1] = MyApp.comBeanWy6.recData[15];
+            buffer6[2] = MyApp.comBeanWy6.recData[16];
+            buffer6[3] = MyApp.comBeanWy6.recData[17];
+            buffer6[4] = MyApp.comBeanWy6.recData[18];
+            buffer6[5] = MyApp.comBeanWy6.recData[19];
+            buffer6[6] = MyApp.comBeanWy6.recData[20];
+            buffer6[7] = MyApp.comBeanWy6.recData[21];
+        }
     }
 
     //解析七个位移传感器包
     public void parserRecDataTg(byte[] buffer1, byte[] buffer2, byte[] buffer3, byte[] buffer4, byte[] buffer5, byte[] buffer6, byte[] buffer7) {
-        buffer1[0] = MyApp.comBeanWy1.recData[14];
-        buffer1[1] = MyApp.comBeanWy1.recData[15];
-        buffer1[2] = MyApp.comBeanWy1.recData[16];
-        buffer1[3] = MyApp.comBeanWy1.recData[17];
-        buffer1[4] = MyApp.comBeanWy1.recData[18];
-        buffer1[5] = MyApp.comBeanWy1.recData[19];
-        buffer1[6] = MyApp.comBeanWy1.recData[20];
-        buffer1[7] = MyApp.comBeanWy1.recData[21];
+        if (MyApp.wy1Connected) {
+            buffer1[0] = MyApp.comBeanWy1.recData[14];
+            buffer1[1] = MyApp.comBeanWy1.recData[15];
+            buffer1[2] = MyApp.comBeanWy1.recData[16];
+            buffer1[3] = MyApp.comBeanWy1.recData[17];
+            buffer1[4] = MyApp.comBeanWy1.recData[18];
+            buffer1[5] = MyApp.comBeanWy1.recData[19];
+            buffer1[6] = MyApp.comBeanWy1.recData[20];
+            buffer1[7] = MyApp.comBeanWy1.recData[21];
+        }
 
-        buffer2[0] = MyApp.comBeanWy2.recData[14];
-        buffer2[1] = MyApp.comBeanWy2.recData[15];
-        buffer2[2] = MyApp.comBeanWy2.recData[16];
-        buffer2[3] = MyApp.comBeanWy2.recData[17];
-        buffer2[4] = MyApp.comBeanWy2.recData[18];
-        buffer2[5] = MyApp.comBeanWy2.recData[19];
-        buffer2[6] = MyApp.comBeanWy2.recData[20];
-        buffer2[7] = MyApp.comBeanWy2.recData[21];
+        if (MyApp.wy2Connected) {
+            buffer2[0] = MyApp.comBeanWy2.recData[14];
+            buffer2[1] = MyApp.comBeanWy2.recData[15];
+            buffer2[2] = MyApp.comBeanWy2.recData[16];
+            buffer2[3] = MyApp.comBeanWy2.recData[17];
+            buffer2[4] = MyApp.comBeanWy2.recData[18];
+            buffer2[5] = MyApp.comBeanWy2.recData[19];
+            buffer2[6] = MyApp.comBeanWy2.recData[20];
+            buffer2[7] = MyApp.comBeanWy2.recData[21];
+        }
 
-        buffer3[0] = MyApp.comBeanWy3.recData[14];
-        buffer3[1] = MyApp.comBeanWy3.recData[15];
-        buffer3[2] = MyApp.comBeanWy3.recData[16];
-        buffer3[3] = MyApp.comBeanWy3.recData[17];
-        buffer3[4] = MyApp.comBeanWy3.recData[18];
-        buffer3[5] = MyApp.comBeanWy3.recData[19];
-        buffer3[6] = MyApp.comBeanWy3.recData[20];
-        buffer3[7] = MyApp.comBeanWy3.recData[21];
+        if (MyApp.wy3Connected) {
+            buffer3[0] = MyApp.comBeanWy3.recData[14];
+            buffer3[1] = MyApp.comBeanWy3.recData[15];
+            buffer3[2] = MyApp.comBeanWy3.recData[16];
+            buffer3[3] = MyApp.comBeanWy3.recData[17];
+            buffer3[4] = MyApp.comBeanWy3.recData[18];
+            buffer3[5] = MyApp.comBeanWy3.recData[19];
+            buffer3[6] = MyApp.comBeanWy3.recData[20];
+            buffer3[7] = MyApp.comBeanWy3.recData[21];
+        }
 
-        buffer4[0] = MyApp.comBeanWy4.recData[14];
-        buffer4[1] = MyApp.comBeanWy4.recData[15];
-        buffer4[2] = MyApp.comBeanWy4.recData[16];
-        buffer4[3] = MyApp.comBeanWy4.recData[17];
-        buffer4[4] = MyApp.comBeanWy4.recData[18];
-        buffer4[5] = MyApp.comBeanWy4.recData[19];
-        buffer4[6] = MyApp.comBeanWy4.recData[20];
-        buffer4[7] = MyApp.comBeanWy4.recData[21];
+        if (MyApp.wy4Connected) {
+            buffer4[0] = MyApp.comBeanWy4.recData[14];
+            buffer4[1] = MyApp.comBeanWy4.recData[15];
+            buffer4[2] = MyApp.comBeanWy4.recData[16];
+            buffer4[3] = MyApp.comBeanWy4.recData[17];
+            buffer4[4] = MyApp.comBeanWy4.recData[18];
+            buffer4[5] = MyApp.comBeanWy4.recData[19];
+            buffer4[6] = MyApp.comBeanWy4.recData[20];
+            buffer4[7] = MyApp.comBeanWy4.recData[21];
+        }
 
-        buffer5[0] = MyApp.comBeanWy5.recData[14];
-        buffer5[1] = MyApp.comBeanWy5.recData[15];
-        buffer5[2] = MyApp.comBeanWy5.recData[16];
-        buffer5[3] = MyApp.comBeanWy5.recData[17];
-        buffer5[4] = MyApp.comBeanWy5.recData[18];
-        buffer5[5] = MyApp.comBeanWy5.recData[19];
-        buffer5[6] = MyApp.comBeanWy5.recData[20];
-        buffer5[7] = MyApp.comBeanWy5.recData[21];
+        if (MyApp.wy5Connected) {
+            buffer5[0] = MyApp.comBeanWy5.recData[14];
+            buffer5[1] = MyApp.comBeanWy5.recData[15];
+            buffer5[2] = MyApp.comBeanWy5.recData[16];
+            buffer5[3] = MyApp.comBeanWy5.recData[17];
+            buffer5[4] = MyApp.comBeanWy5.recData[18];
+            buffer5[5] = MyApp.comBeanWy5.recData[19];
+            buffer5[6] = MyApp.comBeanWy5.recData[20];
+            buffer5[7] = MyApp.comBeanWy5.recData[21];
+        }
 
-        buffer6[0] = MyApp.comBeanWy6.recData[14];
-        buffer6[1] = MyApp.comBeanWy6.recData[15];
-        buffer6[2] = MyApp.comBeanWy6.recData[16];
-        buffer6[3] = MyApp.comBeanWy6.recData[17];
-        buffer6[4] = MyApp.comBeanWy6.recData[18];
-        buffer6[5] = MyApp.comBeanWy6.recData[19];
-        buffer6[6] = MyApp.comBeanWy6.recData[20];
-        buffer6[7] = MyApp.comBeanWy6.recData[21];
+        if (MyApp.wy6Connected) {
+            buffer6[0] = MyApp.comBeanWy6.recData[14];
+            buffer6[1] = MyApp.comBeanWy6.recData[15];
+            buffer6[2] = MyApp.comBeanWy6.recData[16];
+            buffer6[3] = MyApp.comBeanWy6.recData[17];
+            buffer6[4] = MyApp.comBeanWy6.recData[18];
+            buffer6[5] = MyApp.comBeanWy6.recData[19];
+            buffer6[6] = MyApp.comBeanWy6.recData[20];
+            buffer6[7] = MyApp.comBeanWy6.recData[21];
+        }
 
-        buffer7[0] = MyApp.comBeanWy7.recData[14];
-        buffer7[1] = MyApp.comBeanWy7.recData[15];
-        buffer7[2] = MyApp.comBeanWy7.recData[16];
-        buffer7[3] = MyApp.comBeanWy7.recData[17];
-        buffer7[4] = MyApp.comBeanWy7.recData[18];
-        buffer7[5] = MyApp.comBeanWy7.recData[19];
-        buffer7[6] = MyApp.comBeanWy7.recData[20];
-        buffer7[7] = MyApp.comBeanWy7.recData[21];
+        if (MyApp.wy7Connected) {
+            buffer7[0] = MyApp.comBeanWy7.recData[14];
+            buffer7[1] = MyApp.comBeanWy7.recData[15];
+            buffer7[2] = MyApp.comBeanWy7.recData[16];
+            buffer7[3] = MyApp.comBeanWy7.recData[17];
+            buffer7[4] = MyApp.comBeanWy7.recData[18];
+            buffer7[5] = MyApp.comBeanWy7.recData[19];
+            buffer7[6] = MyApp.comBeanWy7.recData[20];
+            buffer7[7] = MyApp.comBeanWy7.recData[21];
+        }
     }
 
     public void refresh() {//更新数据
@@ -631,9 +842,10 @@ public class TestActivity extends AppCompatActivity {
     }
 
     //当传感器断开时，用此方法将静负荷界面数据全置为 0
+    //当传感器断开时，用此方法将位移界面数据全置为 0
     //并且将此时的按钮置为开始、换背景
     public void refreshNullData() {
-        testFragment.refreshNull();
+//        testFragment.refreshNull();
     }
 
     /**
@@ -719,7 +931,7 @@ public class TestActivity extends AppCompatActivity {
                     CurveData = CurveData + "|" + mDrawList[i];
                 }
                 mres.setCurve(CurveData);// 加速度曲线数据
-                mres.setZdjsd(0 - mJsd);// 加速度
+                mres.setZdjsd(mJsd);// 制动加速度
                 mres.setPjjsd(0 - mPjJsd);//平均加速度
                 mres.setKxcjl(mKxcjl);//空行程距离
                 mres.setKxcsj(mKxcsj);//空行程时间
@@ -944,6 +1156,8 @@ public class TestActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        //mJsdBuffer,是list数组，里面存放byte[]数组
+                        //mJsdBuffer长度60，每一个byte[]长度99
                         mJsdBuffer = ComA.mJsdBuffer;
                         Draw();//上传完最后一个包后画图
                         fenxi();
@@ -955,158 +1169,22 @@ public class TestActivity extends AppCompatActivity {
         });
     }
 
-    public void fenxi() {
-        DecimalFormat df2 = new DecimalFormat("0.00");
-        DecimalFormat df = new DecimalFormat("0");
-        // TODO Auto-generated method stub
-        // 空行程时间：稳定状态时间 判断拐点，突变点
-        // 空行程距离：空行程时间和稳定加速度计算
-        // 最大加速度：筛选得到
-        // 平均加速度：待定
-        // 制动时间：判断拐点。
-        // 遍历->1 存入pre和max（？）
-        // 2及以后，与pre(+?)-exKxc判断，未超限，下一个
-        // 超限，置拐点标志位,存入endkxc与startzd，存入max
-        // 继续遍历，与0+-enZero判断。进入范围，存入EndZd，置零点标志位
-        // 遍历结束，重置标志位
-        if (mJsdList.length > 2000) {
-            mSdList = new float[mJsdList.length];
-            mDisList = new float[mJsdList.length];
-            // 重置标志位及参照值
-            boolean flagChange = false;// 是否进入制动
-            boolean flagZero = false;// 是否归零
-            boolean flagStart = false;// 是否开始空行程
-
-            int StartKxc = 0;// 开始空行程
-            int StartZd = 0;// 开始制动时间
-            int EndKxc = 0;// 空行程结束时间
-            int mAvePreCount = AvePreCount;
-            int EndZd = 10;// 制动结束时间（归零）
-
-            float SumPreJsd = 0;// 前若干加速度和，计算平均加速度
-            float AvePreJsd = 100;// 平均加速度
-            float SumAftJsd = 0;// 前若干加速度和，计算平均加速度
-            // 阈值
-
-            int SumPreCount = 0;// 加速度累积
-
-            maxSd = 0;
-            // boolean SpeedBelowZero = false;// 判断速度是否小于0
-            // boolean EndSpeed = false;// 是否停止速度判断
-            // 遍历->1 存入pre和max（？）
-
-            // 空行程结束，开始落体至加速度最大值时间 单位mm
-
-            float preJsd = 0;
-            float preTime = 0;
-            int currenti = 0;
-
-            float tmpPjjsd = (float) (20 + (Math.random()) * 20);
-            float zdsj = (float) (stG * MaxIndex / (tmpPjjsd));
-
-            EndKxc = (int) (MaxIndex - zdsj / 4);
-            // mKxcsj = (float) ((EndKxc-StartKxc) * 0.25 / 1000);
-            mKxcsj = (float) ((EndKxc) * 0.25 / 1000);
-            float mXjgd = Math.abs(LengthListTg[indexXjgd] - PreListTg[indexXjgd]);
-
-            float mZds = Math.max(Math.abs(LengthListTg[indexXdzds1] - PreListTg[indexXdzds1]),
-                    Math.abs(LengthListTg[indexXdzds2] - PreListTg[indexXdzds2]));
-
-            float mHcs = Math.min(Math.abs(LengthListTg[indexXdhcs1] - PreListTg[indexXdhcs1]),
-                    Math.abs(LengthListTg[indexXdhcs2] - PreListTg[indexXdhcs2]));
-
-            float mmaxLength = 0.0f;
-            if (!((mXjgd - mHcs) > 0) && mXjgd > 0) {
-                mmaxLength = mXjgd;
-            } else if (!(mXjgd > 0) && ((mXjgd - mHcs) > 0)) {
-                mmaxLength = mXjgd - mHcs;
-            } else if ((mXjgd > 0) && ((mXjgd - mHcs) > 0)) {
-                mmaxLength = Math.min((mXjgd - mHcs), mXjgd);
-            }
-
-            while (((0.5 * stG * mKxcsj * mKxcsj * 1000) > mmaxLength * 0.9)
-                    && (mmaxLength != 0.0f)) {
-
-                MaxIndex = (int) (MaxIndex * 0.9);
-                EndKxc = (int) (MaxIndex - zdsj / 4);
-                // mKxcsj = (float) ((EndKxc-StartKxc) * 0.25 / 1000);
-                mKxcsj = (float) ((EndKxc) * 0.25 / 1000);
-            }
-
-            for (int i = 0; i < mJsdList.length; i++) {
-                // 第一部分
-                // 自由落体，时间0-maxindex-zdsj。值为标准加速度上下0.5浮动--------------------------------------------------------
-                if (i >= 0 && i < (EndKxc)) {
-                    mDrawList[i] = (float) (stG + Math.random() - 0.5);
-                }
-                // 第二部分，制动介入，时间，zdsj*4 值为stG到
-                // max（-100与min）---------------------------------------------------------------
-                else if (i >= (EndKxc) && i < EndKxc + zdsj * 0.5 && i > 1) {
-                    // float length=Math.max(-100, MaxJsd)+stG;
-                    // float time=zdsj*4;
-                    // float span=length/time;
-                    mDrawList[i] = (float) (mDrawList[i - 1] + (Math.max(
-                            -100, MaxJsd) - stG)
-                            / (zdsj * 0.5)
-                            * (1 + (Math.random() - 0.5) / 10));
-                }
-                // 第三部分
-                // 加速度减少，时间为2*zdsj*4，值为max（-100与min）到0---------------------------------------------------------------
-                else if (i >= EndKxc + zdsj * 0.5 && i < EndKxc + zdsj) {
-                    mDrawList[i] = (float) (mDrawList[i - 1] - (Math.max(
-                            -100, MaxJsd))
-                            / (0.5 * zdsj)
-                            * (1 + (Math.random() - 0.5) / 10));
-                }
-                // 第四部分，加速度0到stG
-                // 时间为2*zdsj*4*(1.2+((math。random-0.5)/10)----------------------------------------------------
-                else if (i >= EndKxc + zdsj && i < EndKxc + zdsj * 1.1) {
-                    mDrawList[i] = (float) (mDrawList[i - 1] + 0.9 * stG
-                            / (zdsj * 0.1)
-                            * (1 + (Math.random() - 0.5) / 10));
-
-                } else if (i >= EndKxc + zdsj * 1.1
-                        && i < EndKxc + zdsj * 1.55) {
-                    mDrawList[i] = (float) (mDrawList[i - 1] - stG * 1.6
-                            / (zdsj * 0.5)
-                            * (1 + (Math.random() - 0.5) / 30));
-
-                } else if (i >= EndKxc + zdsj * 1.55
-                        && i < EndKxc + zdsj * 1.8) {
-                    mDrawList[i] = (float) (mDrawList[i - 1] + Math
-                            .abs(mDrawList[(int) (EndKxc + zdsj * 1.55 - 2)])
-                            / (zdsj * 0.3)
-                            * (1 + (Math.random() - 0.5) / 30));
-
-                }
-                SUMJSD = SUMJSD + Math.abs(mJsdList[i]);
-            }
-            // 震荡部分 值为加速度1到加速度2，加速度2为加速度1的（-0.7+((math。random-0.5)/10)）
-            // 时间为前一段时间*(1.2+((math。random-0.5)/10)
-
-
-            // 计算相关值
-            mJsd = ((float) MaxJsd);
-
-            // mKxcsj = (float) ((EndKxc-StartKxc) * 0.25 / 1000);
-            mKxcsj = (float) ((EndKxc) * 0.25 / 1000);
-            mZdsj = (float) (zdsj / 1000);
-            mKxcjl = (float) (0.5 * stG * mKxcsj * mKxcsj * 1000);
-
-            mPjJsd = tmpPjjsd;
-        }
-    }
 
     private void Draw() {
         int mIndex = 0;
         MaxIndex = 0;// 最大加速度点索引号
         MaxJsd = 0;// 最大加速度
+        //mJsdBuffer,是list数组，里面存放byte[]数组
+        //mJsdBuffer长度60，每一个byte[]长度99
         if (mJsdBuffer.size() > 0) {
+            //（60-1）* 40
             mJsdList = new float[(mJsdBuffer.size() - 1) * 40];
             mDrawList = new float[(mJsdBuffer.size() - 1) * 40];
             mSdList = new float[mJsdList.length];
             mDisList = new float[mJsdList.length];
+            //整个循环之后，mJsdList都被赋值
             for (int i = 1; i < mJsdBuffer.size(); i++) {
+                //第一遍循环之后，mJsdList前40位被赋值，从15到93，++2，一共40个
                 for (int j = 15; j < 94; j += 2) {
                     int hangel = mJsdBuffer.get(i)[j + 0];
                     hangel = mJsdBuffer.get(i)[j + 0] & 0xff;
@@ -1133,6 +1211,145 @@ public class TestActivity extends AppCompatActivity {
                     mIndex++;
                 }
             }
+        }
+    }
+
+    public void fenxi() {
+        DecimalFormat df2 = new DecimalFormat("0.00");
+        DecimalFormat df = new DecimalFormat("0");
+        // TODO Auto-generated method stub
+        // 空行程时间：稳定状态时间 判断拐点，突变点
+        // 空行程距离：空行程时间和稳定加速度计算
+        // 最大加速度：筛选得到
+        // 平均加速度：待定
+        // 制动时间：判断拐点。
+        // 遍历->1 存入pre和max（？）
+        // 2及以后，与pre(+?)-exKxc判断，未超限，下一个
+        // 超限，置拐点标志位,存入endkxc与startzd，存入max
+        // 继续遍历，与0+-enZero判断。进入范围，存入EndZd，置零点标志位
+        // 遍历结束，重置标志位
+        if (mJsdList.length > 2000) {//加速度曲线数据
+            mSdList = new float[mJsdList.length];//速度曲线数据
+            mDisList = new float[mJsdList.length];//位移曲线数据
+            // 重置标志位及参照值
+            boolean flagChange = false;// 是否进入制动
+            boolean flagZero = false;// 是否归零
+            boolean flagStart = false;// 是否开始空行程
+
+            int StartKxc = 0;// 开始空行程
+            int StartZd = 0;// 开始制动时间
+            int EndKxc = 0;// 空行程结束时间
+            int mAvePreCount = AvePreCount;
+            int EndZd = 10;// 制动结束时间（归零）
+
+            float SumPreJsd = 0;// 前若干加速度和，计算平均加速度
+            float AvePreJsd = 100;// 平均加速度
+            float SumAftJsd = 0;// 前若干加速度和，计算平均加速度
+            // 阈值
+
+            int SumPreCount = 0;// 加速度累积
+
+            maxSd = 0;//最大正向速度（空行程结束，制动开始）
+            // boolean SpeedBelowZero = false;// 判断速度是否小于0
+            // boolean EndSpeed = false;// 是否停止速度判断
+            // 遍历->1 存入pre和max（？）
+
+            // 空行程结束，开始落体至加速度最大值时间 单位mm
+
+            float preJsd = 0;
+            float preTime = 0;
+            int currenti = 0;
+
+            float tmpPjjsd = (float) (20 + (Math.random()) * 20);//临时平均加速度？ [20,40)
+            //stG：重力加速度9.8
+            //MaxIndex：最大加速度点索引号
+            float zdsj = (float) (stG * MaxIndex / (tmpPjjsd));//制动时间？
+
+            EndKxc = (int) (MaxIndex - zdsj / 4);
+            // mKxcsj = (float) ((EndKxc-StartKxc) * 0.25 / 1000);
+            mKxcsj = (float) ((EndKxc) * 0.25 / 1000);
+            //mXjgd：下降高度？
+            //indexXjgd：6
+            float mXjgd = Math.abs(LengthListTg[indexXjgd] - PreListTg[indexXjgd]);
+
+            //找制动1和制动2的最大值
+            //indexXdzds1：2，相对制动绳1
+            //indexXdzds2：3，相对制动绳2
+            float mZds = Math.max(Math.abs(LengthListTg[indexXdzds1] - PreListTg[indexXdzds1]),
+                    Math.abs(LengthListTg[indexXdzds2] - PreListTg[indexXdzds2]));
+
+            //找缓冲1和缓冲2的最小值
+            //indexXdhcs1：4，相对缓冲绳1
+            //indexXdhcs2：5，相对缓冲绳2
+            float mHcs = Math.min(Math.abs(LengthListTg[indexXdhcs1] - PreListTg[indexXdhcs1]),
+                    Math.abs(LengthListTg[indexXdhcs2] - PreListTg[indexXdhcs2]));
+
+            float mmaxLength = 0.0f;
+            //如果下降高度 >0，并且下降高度 <= 缓冲
+            if (!((mXjgd - mHcs) > 0) && mXjgd > 0) {
+                mmaxLength = mXjgd;
+                //如果下降高度 <=0，并且下降高度 > 缓冲
+            } else if (!(mXjgd > 0) && ((mXjgd - mHcs) > 0)) {
+                mmaxLength = mXjgd - mHcs;
+                //如果下降高度 > 0 ,并且下降高度 > 缓冲
+            } else if ((mXjgd > 0) && ((mXjgd - mHcs) > 0)) {
+                mmaxLength = Math.min((mXjgd - mHcs), mXjgd);
+            }
+
+            //  1/2gt²
+            //如果空行程距离大于下降高度的0.9那么就把空行程继续减小
+            while (((0.5 * stG * mKxcsj * mKxcsj * 1000) > mmaxLength * 0.9) && (mmaxLength != 0.0f)) {
+                MaxIndex = (int) (MaxIndex * 0.9);
+                EndKxc = (int) (MaxIndex - zdsj / 4);
+                // mKxcsj = (float) ((EndKxc-StartKxc) * 0.25 / 1000);
+                mKxcsj = (float) ((EndKxc) * 0.25 / 1000);
+            }
+
+            for (int i = 0; i < mJsdList.length; i++) {
+                // 第一部分
+                // 自由落体，时间0-maxindex-zdsj。值为标准加速度上下0.5浮动--------------------------------------------------------
+                if (i >= 0 && i < (EndKxc)) {
+                    mDrawList[i] = (float) (stG + Math.random() - 0.5);
+                }
+                // 第二部分，制动介入，时间，zdsj*4 值为stG到max（-100与min）-----------------------------------------------------
+                else if (i >= (EndKxc) && i < EndKxc + zdsj * 0.5 && i > 1) {
+                    // float length=Math.max(-100, MaxJsd)+stG;
+                    // float time=zdsj*4;
+                    // float span=length/time;
+                    mDrawList[i] = (float) (mDrawList[i - 1] +
+                            (Math.max(-100, MaxJsd) - stG) / (zdsj * 0.5) * (1 + (Math.random() - 0.5) / 10));
+                }
+                // 第三部分
+                // 加速度减少，时间为2*zdsj*4，值为max（-100与min）到0---------------------------------------------------------------
+                else if (i >= EndKxc + zdsj * 0.5 && i < EndKxc + zdsj) {
+                    mDrawList[i] = (float) (mDrawList[i - 1] -
+                            (Math.max(-100, MaxJsd)) / (0.5 * zdsj) * (1 + (Math.random() - 0.5) / 10));
+                }
+                // 第四部分，加速度0到stG
+                // 时间为2*zdsj*4*(1.2+((math。random-0.5)/10)----------------------------------------------------
+                else if (i >= EndKxc + zdsj && i < EndKxc + zdsj * 1.1) {
+                    mDrawList[i] = (float) (mDrawList[i - 1] +
+                            0.9 * stG / (zdsj * 0.1) * (1 + (Math.random() - 0.5) / 10));
+                } else if (i >= EndKxc + zdsj * 1.1 && i < EndKxc + zdsj * 1.55) {
+                    mDrawList[i] = (float) (mDrawList[i - 1] -
+                            stG * 1.6 / (zdsj * 0.5) * (1 + (Math.random() - 0.5) / 30));
+                } else if (i >= EndKxc + zdsj * 1.55 && i < EndKxc + zdsj * 1.8) {
+                    mDrawList[i] = (float) (mDrawList[i - 1] +
+                            Math.abs(mDrawList[(int) (EndKxc + zdsj * 1.55 - 2)]) / (zdsj * 0.3) * (1 + (Math.random() - 0.5) / 30));
+                }
+                SUMJSD = SUMJSD + Math.abs(mJsdList[i]);
+            }
+            // 震荡部分 值为加速度1到加速度2，加速度2为加速度1的（-0.7+((math。random-0.5)/10)）
+            // 时间为前一段时间*(1.2+((math。random-0.5)/10)
+
+            // 计算相关值
+            mJsd = (float) MaxJsd;
+
+            // mKxcsj = (float) ((EndKxc-StartKxc) * 0.25 / 1000);
+            mKxcsj = (float) ((EndKxc) * 0.25 / 1000);//空行程时间
+            mZdsj = (float) (zdsj / 1000);//制动时间？
+            mKxcjl = (float) (0.5 * stG * mKxcsj * mKxcsj * 1000);//空行程距离
+            mPjJsd = tmpPjjsd;//平均加速度？
         }
     }
 

@@ -156,8 +156,10 @@ public class TestJsdfragment extends Fragment {
                 tvjsdstate.setText("断开");
                 break;
             case 1://待机
-                imgjsd.setImageResource(R.mipmap.deng_green);
-                tvjsdstate.setText("空闲");
+                if (imgjsd != null) {//偶尔会浮现空指针bug，这里加了一个if判断
+                    imgjsd.setImageResource(R.mipmap.deng_green);
+                    tvjsdstate.setText("空闲");
+                }
                 break;
             case 2://就绪
                 imgjsd.setImageResource(R.mipmap.deng_green);
@@ -211,7 +213,7 @@ public class TestJsdfragment extends Fragment {
         view.SetResourceDataD(mActivity.mDisList);
         fltgjsdcurve.removeAllViews();
         fltgjsdcurve.addView(view);
-        edtgjsd.setText(df2.format(0 - mActivity.getmJsd()));//加速度
+        edtgjsd.setText(df2.format(mActivity.getmJsd()));//加速度
         edtgpjjsd.setText(df2.format(0 - mActivity.getmPjJsd()));//平均加速度
         edtgkxcsj.setText(df4.format(mActivity.getmKxcsj()));//空行程时间
         edtgkxcjl.setText(df2.format(mActivity.getmKxcjl()));//空行程距离

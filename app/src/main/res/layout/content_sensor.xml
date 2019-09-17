@@ -97,19 +97,14 @@
             </LinearLayout>
 
             <LinearLayout
-
-
                 android:id="@+id/ll1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="parent"
                 app:layout_constraintEnd_toStartOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-
                 app:layout_constraintTop_toTopOf="parent">
-
                 <TextView
                     style="@style/style_sensor_length"
                     android:gravity="right"
@@ -130,7 +125,6 @@
             </LinearLayout>
 
             <LinearLayout
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -186,12 +180,10 @@
             </LinearLayout>
 
             <LinearLayout
-
                 android:id="@+id/ll2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="parent"
                 app:layout_constraintEnd_toStartOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -217,7 +209,6 @@
             </LinearLayout>
 
             <LinearLayout
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -275,12 +266,10 @@
             </LinearLayout>
 
             <LinearLayout
-
                 android:id="@+id/ll3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="parent"
                 app:layout_constraintEnd_toStartOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -307,7 +296,6 @@
             </LinearLayout>
 
             <LinearLayout
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -315,9 +303,7 @@
                 app:layout_constraintEnd_toStartOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
-
                 <LinearLayout
-
                     style="@style/ll_sensor"
                     app:layout_constraintBottom_toTopOf="parent"
                     app:layout_constraintEnd_toStartOf="parent"
@@ -365,12 +351,10 @@
             </LinearLayout>
 
             <LinearLayout
-
                 android:id="@+id/ll4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="parent"
                 app:layout_constraintEnd_toStartOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -7,18 +7,24 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.greendao.manager.DataFZQ;
 import com.jaeger.library.StatusBarUtil;
 import com.parachute.Tools.MyFunction;
 import com.parachute.administrator.DATAbase.R;
+import com.parachute.app.MyApp;
+import com.parachute.bean.ISensorInf;
+import com.parachute.utils.CGQSerialControl;
 import com.sensor.SensorData;
+import com.sensor.SensorInf;
 import com.sensor.view.SensorView;
 import com.xzkydz.bean.ComBean;
 import com.xzkydz.helper.ComControl;
@@ -38,10 +44,6 @@ import butterknife.OnClick;
 import es.dmoral.toasty.Toasty;
 
 public class SensorActivity extends AppCompatActivity {
-
-
-    private static int Leixing;
-    static float[] LengthList = new float[8];// 当前距离
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.wy_test_1)
@@ -63,7 +65,6 @@ public class SensorActivity extends AppCompatActivity {
 
     DecimalFormat df2 = new DecimalFormat("####0.00");
 
-    String[] showLength = new String[8];//当前距离，送显
     @BindView(R.id.tv_test_tg_length1)
     TextView tvTestTgLength1;
     @BindView(R.id.tv_test_tg_length2)
@@ -90,39 +91,15 @@ public class SensorActivity extends AppCompatActivity {
     LinearLayout ll3;
     @BindView(R.id.ll4)
     LinearLayout ll4;
-    private boolean shuaXin;
-    private static float[] mFsList;
-    private static long pretime = 0;
 
-
-    public static volatile long[] IsTx = new long[21]; // 测试线程修改参数
-    public static volatile long CaijiTime = 0;
-    public static int TxDelay = 5;
-    private float JyZero = 0f;
-    private float CyZero = 0f;
-    private static float Jy = 0f;
-    private static float Cy = 0f;
-    public static DataFZQ mdata;
-
-    private int indexXk1;
-    private int indexXk2;
-    private int indexXdzds1;
-    private int indexXdzds2;
-    private int indexXdhcs1;
-    private int indexXdhcs2;
-    private int indexXjgd;
-    private int indexWd;
-    private static int indexJsd;
-
-    //<editor-fold desc="Description">
     private boolean IsStart;
-    //</editor-fold>
     private Handler handler;
     static DecimalFormat df4 = new DecimalFormat("####0.00");
 
-    SerialControl ComA;
-    DispQueueThread DispQueue;
-    private boolean showdata = false;
+    CGQSerialControl comA;
+    float[] LengthListTg = new float[8];// 当前距离
+    private boolean showdata = true;
+    private SensorActivity instance;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -134,7 +111,7 @@ public class SensorActivity extends AppCompatActivity {
 
         //保持屏幕常亮
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+        instance = this;
         this.setContentView(R.layout.activity_sensor);
         getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
@@ -143,345 +120,421 @@ public class SensorActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);  //决定左上角的图标是否可以点击
         StatusBarUtil.setColor(this, getResources().getColor(R.color.tittleBar), 0);
-        mdata = new DataFZQ();
-        mdata.initSensors();
-        handler = new Handler();
-
-        mFsList = new float[16];
-        shuaXin = true;
-        indexXk1 = 1;
-        indexXk2 = 2;
-        indexXdzds1 = 5;
-        indexXdzds2 = 6;
-        indexXdhcs1 = 3;
-        indexXdhcs2 = 4;
-        indexXjgd = 7;
-        indexWd = 0;
-        indexJsd = 0;
-
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
             }
         });
-        ComA = new SerialControl(this, DataType.DATA_OK_PARSE);
-        ComA.setiDelay(50);
-        DispQueueStart();
-        ComControl.OpenComPort(ComA);
-        if (IsStart == false) {
-            handler.postDelayed(runnable, 1000);
+
+        //关闭硬件加速
+        wyTest1.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        wyTest2.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        wyTest3.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        wyTest4.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        wyTest5.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        wyTest6.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        wyTest7.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        jsdTest.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
+        handler = new Handler();
+        comA = new CGQSerialControl(instance, DataType.DATA_OK_PARSE);
+        comA.setiDelay(50);
+        ComControl.OpenComPort(comA);
+        onReceivedSensorData();//给各传感器设置电量信号
+        if (!IsStart) {
+            handler.post(runnable);
             IsStart = true;
         }
 
+        //给传感器设置断开监听
+        wyTest1.setOnStatusChangeListener(new MyStatusChangeListener());
+        wyTest2.setOnStatusChangeListener(new MyStatusChangeListener());
+        wyTest3.setOnStatusChangeListener(new MyStatusChangeListener());
+        wyTest4.setOnStatusChangeListener(new MyStatusChangeListener());
+        wyTest5.setOnStatusChangeListener(new MyStatusChangeListener());
+        wyTest6.setOnStatusChangeListener(new MyStatusChangeListener());
+        wyTest7.setOnStatusChangeListener(new MyStatusChangeListener());
+        jsdTest.setOnStatusChangeListener(new MyStatusChangeListener());
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // DataType.DATA_OK_PARSE : 返回整的串口数据包
-        // DataType.DATA_NO_PARSE : 返回不进行校验的数据，不按完整数据包返回。
-
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ComA.close();
-        handler.removeCallbacksAndMessages(null);
-    }
-
-    @OnClick(R.id.btn_show)
-    public void onViewClicked() {
-        if (showdata)//当前状态为显示
-        {
-            showdata = false;
-            btnShow.setBackgroundResource(R.drawable.cgq_float_xs);
-            ll1.setVisibility(View.GONE);
-            ll2.setVisibility(View.GONE);
-            ll3.setVisibility(View.GONE);
-            ll4.setVisibility(View.GONE);
-        } else {
-            showdata = true;
-            btnShow.setBackgroundResource(R.drawable.cgq_float_yc);
-            ll1.setVisibility(View.VISIBLE);
-            ll2.setVisibility(View.VISIBLE);
-            ll3.setVisibility(View.VISIBLE);
-            ll4.setVisibility(View.VISIBLE);
-        }
-    }
-
-    //----------------------------------------------------刷新显示线程
-
-
-    //----------------------------------------------------刷新显示线程
-    private class DispQueueThread extends Thread {
-        private Queue<ComBean> QueueList = new LinkedList<ComBean>();
-
-        @Override
-        public void run() {
-            super.run();
-            while (!isInterrupted()) {
-                final ComBean ComData;
-
-                try {
-                    while ((ComData = QueueList.poll()) != null) {
+    private void onReceivedSensorData() {
+        comA.setOnReceivedSensorListener(new CGQSerialControl.OnReceivedSensorData() {
+            @Override
+            public void updateSensor(final ISensorInf sensorInf) {
+                switch (sensorInf.getSensorType()) {
+                    case 1:
                         runOnUiThread(new Runnable() {
+                            @Override
                             public void run() {
-                                DispRecData(ComData);
+                                SensorData sensorData1 = new SensorData(sensorInf.getPower(), sensorInf.getSignal(), SensorInf.NORMAL, System.currentTimeMillis());
+                                if (wyTest1 != null) {
+                                    wyTest1.setData(sensorData1);
+                                }
                             }
                         });
-                        try {
-                            Thread.sleep(10);//显示性能高的话，可以把此数值调小。
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
                         break;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    case 2:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SensorData sensorData2 = new SensorData(sensorInf.getPower(), sensorInf.getSignal(), SensorInf.NORMAL, System.currentTimeMillis());
+                                if (wyTest2 != null) {
+                                    wyTest2.setData(sensorData2);
+                                }
+                            }
+                        });
+                        break;
+                    case 3:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SensorData sensorData3 = new SensorData(sensorInf.getPower(), sensorInf.getSignal(), SensorInf.NORMAL, System.currentTimeMillis());
+                                if (wyTest3 != null) {
+                                    wyTest3.setData(sensorData3);
+                                }
+                            }
+                        });
+                        break;
+                    case 4:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SensorData sensorData4 = new SensorData(sensorInf.getPower(), sensorInf.getSignal(), SensorInf.NORMAL, System.currentTimeMillis());
+                                if (wyTest4 != null) {
+                                    wyTest4.setData(sensorData4);
+                                }
+                            }
+                        });
+                        break;
+                    case 5:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SensorData sensorData5 = new SensorData(sensorInf.getPower(), sensorInf.getSignal(), SensorInf.NORMAL, System.currentTimeMillis());
+                                if (wyTest5 != null) {
+                                    wyTest5.setData(sensorData5);
+                                }
+                            }
+                        });
+                        break;
+                    case 6:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SensorData sensorData6 = new SensorData(sensorInf.getPower(), sensorInf.getSignal(), SensorInf.NORMAL, System.currentTimeMillis());
+                                if (wyTest6 != null) {
+                                    wyTest6.setData(sensorData6);
+                                }
+                            }
+                        });
+                        break;
+                    case 7:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SensorData sensorData7 = new SensorData(sensorInf.getPower(), sensorInf.getSignal(), SensorInf.NORMAL, System.currentTimeMillis());
+                                if (wyTest7 != null) {
+                                    wyTest7.setData(sensorData7);
+                                }
+                            }
+                        });
+                        break;
+                    case 8:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SensorData sensorData8 = new SensorData(sensorInf.getPower(), sensorInf.getSignal(), SensorInf.NORMAL, System.currentTimeMillis());
+                                if (jsdTest != null) {
+                                    jsdTest.setData(sensorData8);
+                                }
+                            }
+                        });
+                        break;
+                }
+            }
+        });
+    }
+
+    public class MyStatusChangeListener implements SensorView.OnStatusChangeListener {
+        @Override
+        public void status(View view, int i, int i1) {
+            if (i1 == SensorInf.SEARCHING) {
+                switch (view.getId()) {
+                    case R.id.wy_test_1:
+                        MyApp.wy1Connected = false;
+                        Log.d("ooo", "楔块1中断: ");
+                        Toast.makeText(instance, "楔块传感器1中断！", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.wy_test_2:
+                        MyApp.wy2Connected = false;
+                        Toast.makeText(instance, "楔块传感器2中断！", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.wy_test_3:
+                        MyApp.wy3Connected = false;
+                        Toast.makeText(instance, "制动传感器1中断！", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.wy_test_4:
+                        MyApp.wy4Connected = false;
+                        Toast.makeText(instance, "制动传感器2中断！", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.wy_test_5:
+                        MyApp.wy5Connected = false;
+                        Toast.makeText(instance, "缓冲传感器1中断！", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.wy_test_6:
+                        MyApp.wy6Connected = false;
+                        Toast.makeText(instance, "缓冲传感器2中断！", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.wy_test_7:
+                        MyApp.wy7Connected = false;
+                        Toast.makeText(instance, "下降传感器中断！", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.jsd_test:
+                        Log.d("ooo", "加速度传感器中断: ");
+                        MyApp.jsdConnected = false;
+                        Toast.makeText(instance, "加速度传感器中断！", Toast.LENGTH_SHORT).show();
+                        break;
                 }
             }
         }
-
-        public synchronized void AddQueue(ComBean ComData) {
-            QueueList.add(ComData);
-        }
-    }
-
-    private void DispRecData(ComBean comRecData) {
-
-        xianshi(shuaXin, comRecData);
-    }
-
-    // ----------------smilekun---------------------------------——显示线程中测试数据解析加显示
-
-    static void xianshi(boolean xianshi, ComBean ComRecData) {
-
-        int msingal, mpower;
-        // 获取加速度数据
-        if (ComRecData.recData.length > 9) {
-        }
-        // 如果没有进行传感器设置，会进行传感器检测 （完善重新发送配置指令 ）
-
-        if (ComRecData.recData.length > 9) {
-            Leixing = Math.abs((int) ComRecData.recData[9]);
-        }
-        switch (Leixing) {
-
-            case 95:// 激光测距
-                int ki = 12;
-                int Lcount = ComRecData.recData[10];// 传感器编号
-                byte[] LbufferLA = new byte[8];
-                LbufferLA[0] = ComRecData.recData[ki + 2];
-                LbufferLA[1] = ComRecData.recData[ki + 3];
-                LbufferLA[2] = ComRecData.recData[ki + 4];
-                LbufferLA[3] = ComRecData.recData[ki + 5];
-                LbufferLA[4] = ComRecData.recData[ki + 6];
-                LbufferLA[5] = ComRecData.recData[ki + 7];
-                LbufferLA[6] = ComRecData.recData[ki + 8];
-                LbufferLA[7] = ComRecData.recData[ki + 9];
-                // 距离
-                String Length = (new String(LbufferLA, 1, 7,
-                        Charset.forName("ASCII")));
-
-                try {
-                    LengthList[Lcount] = Float.parseFloat(Length) * 1000 + Float.parseFloat(Length.substring(4, 5)) / 10 + (float) (Math.random() - 0.5) / 10;
-
-
-                    msingal = ComRecData.recData[23] < 0 ? 256 + ComRecData.recData[23] : ComRecData.recData[23];
-                    mpower = MyFunction.twoBytesToInt(ComRecData.recData, 21);
-                    mdata.setSensor(Lcount, mpower, msingal, 1);
-                    SetFiveOne(Lcount);
-
-                    break;
-                } catch (Exception e) {
-                }
-                break;
-            case 92: // 加速度
-                if (ComRecData.recData[13] == 7) {//心跳包
-//                        TVEdtxTgJsd.setBackground(drawable);
-//                        TVSearchJsd.setText("加速度传感器已连接");
-
-                    msingal = ComRecData.recData[17] < 0 ? 256 + ComRecData.recData[17] : ComRecData.recData[17];
-                    mpower = MyFunction.twoBytesToInt(ComRecData.recData, 15);
-                    mdata.setSensor(0, mpower, msingal, 1);
-                    // SetJsdWait();
-                }
-                SetFiveOne(indexJsd);
-
-                break;
-        }
-        // ShowData();
     }
 
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            DataFZQ.sensor[] ms = mdata.getSensors();
-
-            for (int i = 0; i < 8; i++) {
-                showLength[i] = df2.format(LengthList[i]) + "mm";
-
+            //同时解析7个传感器的数据
+            byte[] buffer0 = new byte[8];//每个传感器数据长度是8
+            byte[] buffer1 = new byte[8];//每个传感器数据长度是8
+            byte[] buffer2 = new byte[8];//每个传感器数据长度是8
+            byte[] buffer3 = new byte[8];//每个传感器数据长度是8
+            byte[] buffer4 = new byte[8];//每个传感器数据长度是8
+            byte[] buffer5 = new byte[8];//每个传感器数据长度是8
+            byte[] buffer6 = new byte[8];//每个传感器数据长度是8
+            //解析七个位移传感器包（comBean在MyApp中静态保存）
+            parserRecDataTg(buffer0, buffer1, buffer2, buffer3, buffer4, buffer5, buffer6);
+            if (MyApp.wy1Connected) {
+                //七个距离(注意：得到的数据第一位是 ： ，所以不取，从第二位开始取)
+                String length0 = new String(buffer0, 1, 7, Charset.forName("ASCII"));
+                if (!"".equals(length0)) {
+                    //七个位移传感器的数据
+                    LengthListTg[0] = Float.parseFloat(length0) * 1000 + (float) (Math.random() - 0.5) / 10;
+                }
             }
-
-            if ((TimeBetween(IsTx[0]) < 1000)) {
-                SetSensor("加速度", ms[0].getMpower(), ms[0].getMsignal(), 1);
+            if (MyApp.wy2Connected) {
+                String length1 = new String(buffer1, 1, 7, Charset.forName("ASCII"));
+                if (!"".equals(length1)) {
+                    LengthListTg[1] = Float.parseFloat(length1) * 1000 + (float) (Math.random() - 0.5) / 10;
+                }
             }
-            if (TimeBetween(IsTx[1]) < 1000) {
-                SetSensor("测距1", ms[1].getMpower(), ms[1].getMsignal(), 1);
-            } else if (TimeBetween(IsTx[1]) > 1000 * TxDelay) {
-                showLength[1] = "-- mm";
+            if (MyApp.wy3Connected) {
+                String length2 = new String(buffer2, 1, 7, Charset.forName("ASCII"));
+                if (!"".equals(length2)) {
+                    LengthListTg[2] = Float.parseFloat(length2) * 1000 + (float) (Math.random() - 0.5) / 10;
+                }
             }
-            if (TimeBetween(IsTx[2]) < 1000) {
-                SetSensor("测距2", ms[2].getMpower(), ms[2].getMsignal(), 1);
-            } else if (TimeBetween(IsTx[2]) > 1000 * TxDelay) {
-                showLength[2] = "-- mm";
+            if (MyApp.wy4Connected) {
+                String length3 = new String(buffer3, 1, 7, Charset.forName("ASCII"));
+                if (!"".equals(length3)) {
+                    LengthListTg[3] = Float.parseFloat(length3) * 1000 + (float) (Math.random() - 0.5) / 10;
+                }
             }
-            if (TimeBetween(IsTx[3]) < 1000) {
-                SetSensor("测距3", ms[3].getMpower(), ms[3].getMsignal(), 1);
-            } else if (TimeBetween(IsTx[3]) > 1000 * TxDelay) {
-                showLength[3] = "-- mm";
+            if (MyApp.wy5Connected) {
+                String length4 = new String(buffer4, 1, 7, Charset.forName("ASCII"));
+                if (!"".equals(length4)) {
+                    LengthListTg[4] = Float.parseFloat(length4) * 1000 + (float) (Math.random() - 0.5) / 10;
+                }
             }
-            if (TimeBetween(IsTx[4]) < 1000) {
-                SetSensor("测距4", ms[4].getMpower(), ms[4].getMsignal(), 1);
-            } else if (TimeBetween(IsTx[4]) > 1000 * TxDelay) {
-                showLength[4] = "-- mm";
+            if (MyApp.wy6Connected) {
+                String length5 = new String(buffer5, 1, 7, Charset.forName("ASCII"));
+//                Log.i("kkk", "length5: " + length5);
+                if (!"".equals(length5)) {
+                    LengthListTg[5] = Float.parseFloat(length5) * 1000 + (float) (Math.random() - 0.5) / 10;
+                }
             }
-            if (TimeBetween(IsTx[5]) < 1000) {
-                SetSensor("测距5", ms[5].getMpower(), ms[5].getMsignal(), 1);
-            } else if (TimeBetween(IsTx[5]) > 1000 * TxDelay) {
-                showLength[5] = "-- mm";
+            if (MyApp.wy7Connected) {
+                String length6 = new String(buffer6, 1, 7, Charset.forName("ASCII"));
+                if (!"".equals(length6)) {
+                    LengthListTg[6] = Float.parseFloat(length6) * 1000 + (float) (Math.random() - 0.5) / 10;
+                }
             }
-            if (TimeBetween(IsTx[6]) < 1000) {
-                SetSensor("测距6", ms[6].getMpower(), ms[6].getMsignal(), 1);
-            } else if (TimeBetween(IsTx[6]) > 1000 * TxDelay) {
-                showLength[6] = "-- mm";
+            //=================================================显示数据
+            if (MyApp.wy1Connected) {
+                tvTestTgLength1.setText(df2.format(LengthListTg[0]) + "mm");// LengthList--当前距离
+            } else {
+                tvTestTgLength1.setText("--");
             }
-            if (TimeBetween(IsTx[7]) < 1000) {
-                SetSensor("测距7", ms[7].getMpower(), ms[7].getMsignal(), 1);
-            } else if (TimeBetween(IsTx[7]) > 1000 * TxDelay) {
-                showLength[7] = "-- mm";
+            if (MyApp.wy2Connected) {
+                tvTestTgLength2.setText(df2.format(LengthListTg[1]) + "mm");// LengthList--当前距离
+            } else {
+                tvTestTgLength2.setText("--");
             }
-
-
-            if (System.currentTimeMillis() > pretime + 1000) {
-                pretime = System.currentTimeMillis();
-
-                refresh();
-
-
+            if (MyApp.wy3Connected) {
+                tvTestTgLength3.setText(df2.format(LengthListTg[2]) + "mm");// LengthList--当前距离
+            } else {
+                tvTestTgLength3.setText("--");
             }
-
-            // }
-
-            handler.postDelayed(this, 250);
+            if (MyApp.wy4Connected) {
+                tvTestTgLength4.setText(df2.format(LengthListTg[3]) + "mm");// LengthList--当前距离
+            } else {
+                tvTestTgLength4.setText("--");
+            }
+            if (MyApp.wy5Connected) {
+                tvTestTgLength5.setText(df2.format(LengthListTg[4]) + "mm");// LengthList--当前距离
+            } else {
+                tvTestTgLength5.setText("--");
+            }
+            if (MyApp.wy6Connected) {
+                tvTestTgLength6.setText(df2.format(LengthListTg[5]) + "mm");// LengthList--当前距离
+            } else {
+                tvTestTgLength6.setText("--");
+            }
+            if (MyApp.wy7Connected) {
+                tvTestTgLength7.setText(df2.format(LengthListTg[6]) + "mm");// LengthList--当前距离
+            } else {
+                tvTestTgLength7.setText("--");
+            }
+            handler.postDelayed(this, 1000);
         }
     };
 
-    private void refresh() {
-        tvTestTgLength1.setText(showLength[1]);
-        tvTestTgLength2.setText(showLength[2]);
-        tvTestTgLength3.setText(showLength[3]);
-        tvTestTgLength4.setText(showLength[4]);
-        tvTestTgLength5.setText(showLength[5]);
-        tvTestTgLength6.setText(showLength[6]);
-        tvTestTgLength7.setText(showLength[7]);
-    }
 
-    public static synchronized void SetFiveOne(int index) {
-        IsTx[index] = System.currentTimeMillis();
-    }
+    //解析七个位移传感器包
+    public void parserRecDataTg(byte[] buffer1, byte[] buffer2, byte[] buffer3, byte[] buffer4, byte[] buffer5, byte[] buffer6, byte[] buffer7) {
+        if (MyApp.wy1Connected) {
+            buffer1[0] = MyApp.comBeanWy1.recData[14];
+            buffer1[1] = MyApp.comBeanWy1.recData[15];
+            buffer1[2] = MyApp.comBeanWy1.recData[16];
+            buffer1[3] = MyApp.comBeanWy1.recData[17];
+            buffer1[4] = MyApp.comBeanWy1.recData[18];
+            buffer1[5] = MyApp.comBeanWy1.recData[19];
+            buffer1[6] = MyApp.comBeanWy1.recData[20];
+            buffer1[7] = MyApp.comBeanWy1.recData[21];
+        }
 
+        if (MyApp.wy2Connected) {
+            buffer2[0] = MyApp.comBeanWy2.recData[14];
+            buffer2[1] = MyApp.comBeanWy2.recData[15];
+            buffer2[2] = MyApp.comBeanWy2.recData[16];
+            buffer2[3] = MyApp.comBeanWy2.recData[17];
+            buffer2[4] = MyApp.comBeanWy2.recData[18];
+            buffer2[5] = MyApp.comBeanWy2.recData[19];
+            buffer2[6] = MyApp.comBeanWy2.recData[20];
+            buffer2[7] = MyApp.comBeanWy2.recData[21];
+        }
 
-    private long TimeBetween(Long mTime) {
-        return System.currentTimeMillis() - mTime;
-    }
+        if (MyApp.wy3Connected) {
+            buffer3[0] = MyApp.comBeanWy3.recData[14];
+            buffer3[1] = MyApp.comBeanWy3.recData[15];
+            buffer3[2] = MyApp.comBeanWy3.recData[16];
+            buffer3[3] = MyApp.comBeanWy3.recData[17];
+            buffer3[4] = MyApp.comBeanWy3.recData[18];
+            buffer3[5] = MyApp.comBeanWy3.recData[19];
+            buffer3[6] = MyApp.comBeanWy3.recData[20];
+            buffer3[7] = MyApp.comBeanWy3.recData[21];
+        }
 
-    private static void SetSensorState(SensorView msv, float mpower, float msignal, int minf) {
-        SensorData svData = new SensorData();
-        // 第二步：设置 SensorData 属性
-        svData.setStatus(minf)
-                .setPower(mpower)
-                .setSignal(msignal);
+        if (MyApp.wy4Connected) {
+            buffer4[0] = MyApp.comBeanWy4.recData[14];
+            buffer4[1] = MyApp.comBeanWy4.recData[15];
+            buffer4[2] = MyApp.comBeanWy4.recData[16];
+            buffer4[3] = MyApp.comBeanWy4.recData[17];
+            buffer4[4] = MyApp.comBeanWy4.recData[18];
+            buffer4[5] = MyApp.comBeanWy4.recData[19];
+            buffer4[6] = MyApp.comBeanWy4.recData[20];
+            buffer4[7] = MyApp.comBeanWy4.recData[21];
+        }
 
-        // 第三步：给SensorView 赋值
-        msv.setData(svData);
-    }
+        if (MyApp.wy5Connected) {
+            buffer5[0] = MyApp.comBeanWy5.recData[14];
+            buffer5[1] = MyApp.comBeanWy5.recData[15];
+            buffer5[2] = MyApp.comBeanWy5.recData[16];
+            buffer5[3] = MyApp.comBeanWy5.recData[17];
+            buffer5[4] = MyApp.comBeanWy5.recData[18];
+            buffer5[5] = MyApp.comBeanWy5.recData[19];
+            buffer5[6] = MyApp.comBeanWy5.recData[20];
+            buffer5[7] = MyApp.comBeanWy5.recData[21];
+        }
 
-    private static void SetSensor(SensorView msv, Integer index) {
-        try {
-            DataFZQ.sensor mS = mdata.getSensors()[index];
-            if (mS != null) {
-                SensorData svData = new SensorData();
-                // 第二步：设置 SensorData 属性
-                svData.setStatus(mS.getMstate())
-                        .setPower(mS.getMpower())
-                        .setSignal(mS.getMsignal());
+        if (MyApp.wy6Connected) {
+            buffer6[0] = MyApp.comBeanWy6.recData[14];
+            buffer6[1] = MyApp.comBeanWy6.recData[15];
+            buffer6[2] = MyApp.comBeanWy6.recData[16];
+            buffer6[3] = MyApp.comBeanWy6.recData[17];
+            buffer6[4] = MyApp.comBeanWy6.recData[18];
+            buffer6[5] = MyApp.comBeanWy6.recData[19];
+            buffer6[6] = MyApp.comBeanWy6.recData[20];
+            buffer6[7] = MyApp.comBeanWy6.recData[21];
+        }
 
-                // 第三步：给SensorView 赋值
-                msv.setData(svData);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (MyApp.wy7Connected) {
+            buffer7[0] = MyApp.comBeanWy7.recData[14];
+            buffer7[1] = MyApp.comBeanWy7.recData[15];
+            buffer7[2] = MyApp.comBeanWy7.recData[16];
+            buffer7[3] = MyApp.comBeanWy7.recData[17];
+            buffer7[4] = MyApp.comBeanWy7.recData[18];
+            buffer7[5] = MyApp.comBeanWy7.recData[19];
+            buffer7[6] = MyApp.comBeanWy7.recData[20];
+            buffer7[7] = MyApp.comBeanWy7.recData[21];
         }
     }
 
-    //----------------------------------------------------串口控制类
-    private class SerialControl extends SerialHelper {
-        public SerialControl(Context context, int mDataType) {
-            super(context, mDataType);
-        }
 
-        public SerialControl(Context context, String sPort, String sBaudRate, int mDataType) {
-            super(context, sPort, sBaudRate, mDataType);
-        }
-
-        @Override
-        protected void onDataReceived(ComBean comBean) {
-            DispQueue.AddQueue(comBean); //线程定时刷新显示(推荐)
-        }
-
-    }
-
-    public void DispQueueStart() {
-        DispQueue = new DispQueueThread();
-        DispQueue.start();
-    }
-
-
-    public void SetSensor(String str, float mpower, float msignal, int minf) {
-        try {
-            switch (str) {
-                case "测距1":
-                    SetSensorState(wyTest1, mpower, msignal, minf);
-                    break;
-                case "测距2":
-                    SetSensorState(wyTest2, mpower, msignal, minf);
-                    break;
-                case "测距3":
-                    SetSensorState(wyTest3, mpower, msignal, minf);
-                    break;
-                case "测距4":
-                    SetSensorState(wyTest4, mpower, msignal, minf);
-                    break;
-                case "测距5":
-                    SetSensorState(wyTest5, mpower, msignal, minf);
-                    break;
-                case "测距6":
-                    SetSensorState(wyTest6, mpower, msignal, minf);
-                    break;
-                case "测距7":
-                    SetSensorState(wyTest7, mpower, msignal, minf);
-                    break;
-                case "加速度":
-                    SetSensorState(jsdTest, mpower, msignal, minf);
-                    break;
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    @OnClick(R.id.btn_show)
+    public void onViewClicked() {
+        if (showdata) {//当前状态为显示
+            showdata = false;
+            btnShow.setBackgroundResource(R.drawable.cgq_float_xs);
+            tvTestTgLength1.setVisibility(View.INVISIBLE);
+            tvTestTgLength2.setVisibility(View.INVISIBLE);
+            tvTestTgLength3.setVisibility(View.INVISIBLE);
+            tvTestTgLength4.setVisibility(View.INVISIBLE);
+            tvTestTgLength5.setVisibility(View.INVISIBLE);
+            tvTestTgLength6.setVisibility(View.INVISIBLE);
+            tvTestTgLength7.setVisibility(View.INVISIBLE);
+        } else {
+            showdata = true;
+            btnShow.setBackgroundResource(R.drawable.cgq_float_yc);
+            tvTestTgLength1.setVisibility(View.VISIBLE);
+            tvTestTgLength2.setVisibility(View.VISIBLE);
+            tvTestTgLength3.setVisibility(View.VISIBLE);
+            tvTestTgLength4.setVisibility(View.VISIBLE);
+            tvTestTgLength5.setVisibility(View.VISIBLE);
+            tvTestTgLength6.setVisibility(View.VISIBLE);
+            tvTestTgLength7.setVisibility(View.VISIBLE);
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        comA.close();
+        handler.removeCallbacksAndMessages(null);
+        handler = null;
+        MyApp.wy1Connected = false;
+        MyApp.wy2Connected = false;
+        MyApp.wy3Connected = false;
+        MyApp.wy4Connected = false;
+        MyApp.wy5Connected = false;
+        MyApp.wy6Connected = false;
+        MyApp.wy7Connected = false;
+        MyApp.jsdConnected = false;
+        MyApp.comBeanWy1 = null;
+        MyApp.comBeanWy2 = null;
+        MyApp.comBeanWy3 = null;
+        MyApp.comBeanWy4 = null;
+        MyApp.comBeanWy5 = null;
+        MyApp.comBeanWy6 = null;
+        MyApp.comBeanWy7 = null;
+        MyApp.comBeanJsd7 = null;
+        MyApp.wyBean1 = null;
+        MyApp.wyBean2 = null;
+        MyApp.wyBean3 = null;
+        MyApp.wyBean4 = null;
+        MyApp.wyBean5 = null;
+        MyApp.wyBean6 = null;
+        MyApp.wyBean7 = null;
+        MyApp.jsdBean7 = null;
+    }
+
 }
